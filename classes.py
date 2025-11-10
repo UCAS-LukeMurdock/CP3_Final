@@ -9,19 +9,19 @@ class WholeGame:
 
 
 class Text:
-    def __init__(self, style='freesansbold.ttf', size=60, text='text', color=(250,250,250), coord=(0,0)):
+    def __init__(self, style='freesansbold.ttf', size=60, txt='text', color=(250,250,250), coord=(0,0)):
         self.style = style
         self.size = size
-        self.text = text
+        self.txt = txt
         self.color = color
         self.coord = coord
 
     def display(self, game):
-        txt_display = pygame.font.Font(self.style, self.size).render(self.text, True, self.color)
+        txt_display = pygame.font.Font(self.style, self.size).render(self.txt, True, self.color)
         game.screen.blit(txt_display, self.coord)
 
     def __eq__(self, string):
-        return self.text == string
+        return self.txt == string
 
 
 
@@ -44,12 +44,13 @@ class Button:
 
         if self.rect.collidepoint(pos):
             if is_rect:
+                # Creates a white rectangle around the button
                 glow_surface = pygame.Surface((self.rect.width + 12, self.rect.height + 12), pygame.SRCALPHA)
                 pygame.draw.rect(glow_surface, (255, 255, 255, 255), glow_surface.get_rect(), border_radius=8)  # border_radius optional
                 game.screen.blit(glow_surface, (self.rect.x - 6, self.rect.y - 6))
             else:
 
-                # Create a smaller, fully opaque glow
+                # Create a white circle around the button
                 glow_radius = max(self.rect.width, self.rect.height) // 2 + 1
                 glow_surface = pygame.Surface((self.rect.width + 3, self.rect.height + 3), pygame.SRCALPHA)
                 center = (glow_surface.get_width() // 2, glow_surface.get_height() // 2)
@@ -58,7 +59,6 @@ class Button:
                 # Position the glow behind the button
                 game.screen.blit(glow_surface, (self.rect.x - 1, self.rect.y - 1))
 
-            # Draw the button on top
             game.screen.blit(self.img, self.rect)
 
             # Check for click
@@ -115,7 +115,7 @@ class Room:
     def __init__(self, back_img, name):
         self.name = name
         self.background = pygame.transform.scale(pygame.image.load(back_img), (1000,600))
-        self.opons = []
+        self.oppons = [] # oppon means opponent
 
     def display_back(self, game):
         game.screen.blit(self.background, (0,0))

@@ -7,10 +7,10 @@ from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
 def play(game):
 
     next = Button(500-128/2,300-128/2, 'resources/buttons/continue.png')
-    rooms = [Room('resources/backgrounds/map.png', Text(text="Ocean", coord=(400,5))),
-            Room('resources/backgrounds/sword.png', Text(text="Jungle", coord=(400,5))),
-            Room('resources/backgrounds/map.png', Text(text="Mountain", coord=(355,5))),
-            Room('resources/backgrounds/sword.png', Text(text="Cave", coord=(425,5)))]
+    rooms = [Room('resources/backgrounds/map.png', Text(txt="Ocean", coord=(400,5))),
+            Room('resources/backgrounds/sword.png', Text(txt="Jungle", coord=(400,5))),
+            Room('resources/backgrounds/map.png', Text(txt="Mountain", coord=(355,5))),
+            Room('resources/backgrounds/sword.png', Text(txt="Cave", coord=(425,5)))]
     player = Knight(10,250)
 
     if game.mode == "easy":
@@ -27,15 +27,15 @@ def play(game):
 
         if room.name=="Ocean":
             for i in range(0,2+dif):
-                room.opons.append(Urchin(r.randint(550,850),r.randint(10,450), speed))
+                room.oppons.append(Urchin(r.randint(550,850),r.randint(10,450), speed))
         elif room.name=="Jungle":
             for i in range(0,3+dif):
-                room.opons.append(Snake(r.randint(550,850),r.randint(10,450), speed))
+                room.oppons.append(Snake(r.randint(550,850),r.randint(10,450), speed))
         elif room.name=="Mountain":
             for i in range(0,4+dif):
-                room.opons.append(Wolf(r.randint(550,850),r.randint(10,450), speed))
+                room.oppons.append(Wolf(r.randint(550,850),r.randint(10,450), speed))
         elif room.name=="Cave":
-            room.opons.append(Dragon(r.randint(550,850),r.randint(10,450), speed))
+            room.oppons.append(Dragon(r.randint(550,850),r.randint(10,450), speed))
             
         while player.hp > 0:
             room.display_back(game)
@@ -75,13 +75,13 @@ def play(game):
                         player.y_change = 0
             
             
-            for opon in room.opons:
-                opon.move(player)
+            for oppon in room.oppons:
+                oppon.move(player)
             player.move()
 
 
-            for opon in room.opons:
-                opon.display(game)
+            for oppon in room.oppons:
+                oppon.display(game)
             player.display(game)
 
             if next.draw(game, True):

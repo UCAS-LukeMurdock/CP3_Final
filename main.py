@@ -26,9 +26,9 @@ def main():
     # mixer.music.load('resources/background.wav')
     # mixer.music.play(-1)
 
-    title = Text(text="Adventure: Dragon??", coord=(200,5))
+    title = Text(txt="Adventure: Dragon??", coord=(200,5))
     help_txt = " - Use arrow keys for movement\n\n - Press {key} for attack\n\n - Press {key} to use special abilities"
-    help = Text(size=20, text=help_txt, coord=(70,300))
+    help = Text(size=20, txt=help_txt, coord=(70,300))
 
     help_button = Button(175,150, 'resources/buttons/help.png', .8)
     easy_button = Button(700,100, 'resources/buttons/easy.png')
