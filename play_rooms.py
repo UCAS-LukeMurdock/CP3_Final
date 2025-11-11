@@ -7,10 +7,10 @@ from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
 def play(game):
 
     next = Button(500-128/2,300-128/2, 'resources/buttons/continue.png')
-    rooms = [Room('resources/backgrounds/map.png', Text(txt="Ocean", coord=(400,5))),
-            Room('resources/backgrounds/sword.png', Text(txt="Jungle", coord=(400,5))),
-            Room('resources/backgrounds/map.png', Text(txt="Mountain", coord=(355,5))),
-            Room('resources/backgrounds/sword.png', Text(txt="Cave", coord=(425,5)))]
+    rooms = [Room('resources/backgrounds/ocean.png', Text(txt="Ocean", coord=(400,5))),
+            Room('resources/backgrounds/jungle.png', Text(txt="Jungle", coord=(400,5))),
+            Room('resources/backgrounds/rock.png', Text(txt="Mountain", coord=(355,5))),
+            Room('resources/backgrounds/cave.png', Text(txt="Cave", coord=(425,5)))]
     player = Knight(10,250)
 
     if game.mode == "easy":
