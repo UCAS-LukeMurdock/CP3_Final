@@ -1,5 +1,5 @@
 # Classes File
-import pygame
+import pygame, math
 from abc import ABC, abstractmethod
 
 class WholeGame:
@@ -148,6 +148,7 @@ class Knight(Character):
         super().__init__(x,y)
         self.x_change = 0
         self.y_change = 0
+        self.rect = self.img.get_rect(topleft=(x, y))
         self.hp = 5
 
     def move(self):
@@ -164,10 +165,14 @@ class Knight(Character):
         elif self.y >= (600-128):
             self.y = (600-128)
 
+        # self.rect_x = self.x
+        # self.rect_y = self.y
+
 class Enemy(Character):
     def __init__(self, x, y, change=0.15):
         super().__init__(x, y)
         self.change = change
+        self.rect = self.img.get_rect(topleft=(x, y))
 
     def move(self, player):
         # counter = 0
@@ -204,6 +209,17 @@ class Enemy(Character):
             self.y = 0
         elif self.y >= (600-128):
             self.y = (600-128)
+
+    def collide_check(self, player):
+        # distance = math.sqrt((self.x - player.x)**2 + ((self.y - player.y)**2))
+        # if distance < 48: # the sum of half the width of the bullet and of the alien
+        #     return True
+        # return False
+
+        if self.rect.colliderect(player.rect):
+            print("Collision detected!")
+            # self.attack()
+            # Implement collision response (e.g., move player back)
             
 
 

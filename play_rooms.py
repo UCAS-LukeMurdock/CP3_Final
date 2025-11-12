@@ -1,7 +1,6 @@
 # File to play through the rooms
 import pygame
 import random as r
-import math
 from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
 
 def play(game):
@@ -74,18 +73,46 @@ def play(game):
                     elif event.key == pygame.K_DOWN and not keys[pygame.K_DOWN]:
                         player.y_change = 0
             
-            
-            for oppon in room.oppons:
-                oppon.move(player)
-            player.move()
+            if room.oppons != []:
+                # Changes
 
+                #  for enemy in enemies:
+                    # enemy.move()
+                    # if enemy.lose():
+                    #     enemies = []
+                    #     game_over = True
 
-            for oppon in room.oppons:
-                oppon.display(game)
-            player.display(game)
+                for oppon in room.oppons:
+                    oppon.move(player)
 
-            if next.draw(game, True):
-                break
+                    oppon.collide_check(player)
+                    
+                player.move()
+                
+
+                # Set Items
+                for oppon in room.oppons:
+                    oppon.display(game)
+                player.display(game)
+
+                # for i, enemy in enumerate(enemies):
+                # if enemy.is_hit(bullet):
+                #     bullet.state = "ready"
+                #     mixer.Sound('resources/explosion.wav').play()
+                #     x = random.randint(0,800-64)
+                #     y = random.randint(0,300-64)
+                #     enemies.pop(i)
+
+                #     player.score += 1
+                #     bullet.x = player.x
+                #     bullet.y = player.y
+                #     bullet.change = 0
+
+                #     if enemies == []:
+                #         round = create_enemies(round)
+            else:
+                if next.draw(game, True):
+                    break
 
             pygame.display.flip()
 
