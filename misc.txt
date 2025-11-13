@@ -1,3 +1,9 @@
+Mischellaneus Stuff
+
+Draw red box where sprite is:
+    pygame.draw.rect(game.screen, (255, 0, 0), self.rect, 2)
+
+
 In Pygame, managing opacity, also known as alpha transparency, can be achieved in several ways, primarily through the use of pygame.Surface objects with alpha channels.
 1. Surface Alpha Transparency:
 Create a pygame.Surface with an alpha channel by passing the pygame.SRCALPHA flag during its creation:

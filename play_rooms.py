@@ -94,6 +94,9 @@ def play(game):
                 for oppon in room.oppons:
                     oppon.display(game)
                 player.display(game)
+                player.invincibility(game)
+                player.heart_status(game)
+                
 
                 # for i, enemy in enumerate(enemies):
                 # if enemy.is_hit(bullet):

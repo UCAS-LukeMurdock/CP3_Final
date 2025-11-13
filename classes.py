@@ -132,6 +132,7 @@ class Character(ABC):
         self.x = x
         self.y = y
         self.img = pygame.image.load(self.img_path)
+        self.rect = self.img.get_rect(topleft=(x, y))
 
     def display(self, game):
         game.screen.blit(self.img, (self.x,self.y))
@@ -148,8 +149,9 @@ class Knight(Character):
         super().__init__(x,y)
         self.x_change = 0
         self.y_change = 0
-        self.rect = self.img.get_rect(topleft=(x, y))
         self.hp = 5
+        self.invincible = False
+        self.invinc_start = 0
 
     def move(self):
         self.x += self.x_change
@@ -165,14 +167,42 @@ class Knight(Character):
         elif self.y >= (600-128):
             self.y = (600-128)
 
-        # self.rect_x = self.x
-        # self.rect_y = self.y
+        self.rect.topleft = (self.x, self.y)
+
+    def take_damage(self):
+        if not self.invincible:
+            self.hp -= 1
+
+            self.invincible = True
+            self.invinc_start = pygame.time.get_ticks()
+
+    def heart_status(self, game):
+        file_path = 'resources/player/hearts/'
+        if self.hp == 0:
+            file_path += 'empty.png'
+        else:
+            file_path += f'heart_{str(self.hp)}.png'
+        heart_img = pygame.image.load(file_path)
+        heart_img = pygame.transform.scale(heart_img, (50,50))
+        game.screen.blit(heart_img, (self.x +22,self.y +75))
+
+    def invincibility(self, game):
+        if self.invincible:
+            now = pygame.time.get_ticks()
+            if now - self.invinc_start >= 2000: # if the player has been invincible for 2 secs 
+                self.invincible = False
+                print("Invincibility ended!")
+                return
+            invinc_img = pygame.transform.scale(self.img, (80,90))
+            game.screen.blit(invinc_img, (self.x +10,self.y +15))
+
+
+
 
 class Enemy(Character):
     def __init__(self, x, y, change=0.15):
         super().__init__(x, y)
         self.change = change
-        self.rect = self.img.get_rect(topleft=(x, y))
 
     def move(self, player):
         # counter = 0
@@ -210,15 +240,21 @@ class Enemy(Character):
         elif self.y >= (600-128):
             self.y = (600-128)
 
-    def collide_check(self, player):
+        self.rect.topleft = (self.x, self.y)
+
+    def touch_attack(self, other):
+        other.take_damage()
+
+
+    def collide_check(self, other):
         # distance = math.sqrt((self.x - player.x)**2 + ((self.y - player.y)**2))
         # if distance < 48: # the sum of half the width of the bullet and of the alien
         #     return True
         # return False
 
-        if self.rect.colliderect(player.rect):
+        if self.rect.colliderect(other.rect):
             print("Collision detected!")
-            # self.attack()
+            self.touch_attack(other)
             # Implement collision response (e.g., move player back)
             
 
