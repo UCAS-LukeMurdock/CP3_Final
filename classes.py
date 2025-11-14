@@ -152,6 +152,7 @@ class Knight(Character):
         self.hp = 5
         self.invincible = False
         self.invinc_start = 0
+        self.sword_ready = True
 
     def move(self):
         self.x += self.x_change
@@ -195,6 +196,22 @@ class Knight(Character):
                 return
             invinc_img = pygame.transform.scale(self.img, (80,90))
             game.screen.blit(invinc_img, (self.x +10,self.y +15))
+
+    def attack(self):
+        #I need to add an attack for the player(knight) to use the bold_swing.png 
+        # to attack the urchin, wolves. snake, and dragon, These should be methods 
+        # that can do one slash on the animal and they are defeated(dissapear)
+        # space bar to show the image 
+
+        # if bullet.state == "ready":
+        #     bullet.x = player.x +16
+        #     bullet.y = player.y +10
+        #     bullet.state = "fire"
+        #     mixer.Sound('resources/laser.wav').play()
+
+        pygame.image.load('resources/player/bold_swing.png')
+
+
 
 
 
@@ -241,9 +258,7 @@ class Enemy(Character):
             self.y = (600-128)
 
         self.rect.topleft = (self.x, self.y)
-
-    def touch_attack(self, other):
-        other.take_damage()
+        
 
 
     def collide_check(self, other):
@@ -254,7 +269,7 @@ class Enemy(Character):
 
         if self.rect.colliderect(other.rect):
             print("Collision detected!")
-            self.touch_attack(other)
+            other.take_damage()
             # Implement collision response (e.g., move player back)
             
 
@@ -263,6 +278,7 @@ class Urchin(Enemy):
     def __init__(self, x,y, change=0.15):
         self.img_path = 'resources/enemies/urchin.png'
         super().__init__(x,y, change)
+
 
 class Snake(Enemy):
     def __init__(self, x,y, change=0.15):

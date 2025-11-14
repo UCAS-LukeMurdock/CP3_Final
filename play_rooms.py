@@ -57,12 +57,9 @@ def play(game):
                         player.y_change = 0.3
                         
                     if keys[pygame.K_SPACE]:
-                        pass
-                        # if bullet.state == "ready":
-                        #     bullet.x = player.x +16
-                        #     bullet.y = player.y +10
-                        #     bullet.state = "fire"
-                        #     mixer.Sound('resources/laser.wav').play()
+                        if player.sword_ready == True:
+                            player.sword_attack(game)
+                        
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT and not keys[pygame.K_LEFT]:
                             player.x_change = 0
