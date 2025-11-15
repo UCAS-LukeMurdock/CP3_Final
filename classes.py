@@ -179,12 +179,12 @@ class Knight(Character):
         # Borders of screen
         if self.x <= 0:
             self.x = 0
-        elif self.x >= (1000-128):
-            self.x = (1000-128)
+        elif self.x >= (1000-95):
+            self.x = (1000-95)
         if self.y <= 0:
             self.y = 0
-        elif self.y >= (600-128):
-            self.y = (600-128)
+        elif self.y >= (600-115):
+            self.y = (600-115)
 
         self.rect.topleft = (self.x, self.y)
 
@@ -203,8 +203,19 @@ class Knight(Character):
                 self.sword_cooldown_start = 0
 
     def display(self, game):
-        # draw player
-        super().display(game)
+        # Check invincibility
+        if self.invincible:
+            now = pygame.time.get_ticks()
+            if now - self.invinc_start >= 2000: # if the player has been invincible for 2 secs 
+                self.invincible = False
+                print("Invincibility ended!")
+            else:
+                bright_image = self.img.copy()
+                bright_image.fill((60, 60, 60), special_flags=pygame.BLEND_RGB_ADD)
+                game.screen.blit(bright_image, (self.x,self.y))
+        else:
+            # draw player
+            super().display(game)
 
         # draw sword when active (position it relative to player)
         if self.sword_active:
@@ -231,16 +242,6 @@ class Knight(Character):
         heart_img = pygame.image.load(file_path)
         heart_img = pygame.transform.scale(heart_img, (50,50))
         game.screen.blit(heart_img, (self.x +22,self.y +75))
-
-    def invincibility(self, game):
-        if self.invincible:
-            now = pygame.time.get_ticks()
-            if now - self.invinc_start >= 2000: # if the player has been invincible for 2 secs 
-                self.invincible = False
-                print("Invincibility ended!")
-                return
-            invinc_img = pygame.transform.scale(self.img, (80,90))
-            game.screen.blit(invinc_img, (self.x +10,self.y +15))
 
     def attack(self):
         #I need to add an attack for the player(knight) to use the bold_swing.png 

@@ -3,7 +3,7 @@
 import pygame
 from pygame import mixer
 from classes import WholeGame, Button, Text
-from play_rooms import play
+from play_game import play 
 
 
 def main():
@@ -30,7 +30,8 @@ def main():
     help_txt = " - Use arrow keys for movement\n\n - Press space for attack\n\n - Press {key} to use special abilities"
     help = Text(size=20, txt=help_txt, coord=(70,300))
 
-    help_button = Button(175,150, 'resources/buttons/help.png', .8)
+    # help_button = Button(175,150, 'resources/buttons/help.png', .8)
+    help_button = Button(175,150, 'resources/buttons/info.png', .2)
     easy_button = Button(700,100, 'resources/buttons/easy.png')
     normal_button = Button(700,250, 'resources/buttons/normal.png')
     hard_button = Button(700,400, 'resources/buttons/hard.png')
@@ -39,6 +40,7 @@ def main():
     need_help = False
     running = True
     while running:
+        game.mode = ''
         game.screen.blit(background, (0,0))
         title.display(game)
 
@@ -47,8 +49,19 @@ def main():
 
             if event.type == pygame.QUIT:
                 running = False
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_i or event.key == pygame.K_SLASH:
+                    need_help = not need_help
+                elif event.key == pygame.K_e or event.key == pygame.K_1:
+                    game.mode = 'easy'
+                elif event.key == pygame.K_n or event.key == pygame.K_2:
+                    game.mode = 'normal'
+                elif event.key == pygame.K_h or event.key == pygame.K_3:
+                    game.mode = 'hard'
 
-            # if game.mode == '':
         if help_button.draw(game):
             need_help = not need_help
         if need_help:
@@ -56,12 +69,12 @@ def main():
         
         if easy_button.draw(game, True):
             game.mode = 'easy'
-            play(game)
         elif normal_button.draw(game, True):
             game.mode = 'normal'
-            play(game)
         elif hard_button.draw(game, True):
             game.mode = 'hard'
+        
+        if game.mode != '':
             play(game)
 
             # else:

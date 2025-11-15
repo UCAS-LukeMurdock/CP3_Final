@@ -1,0 +1,35 @@
+# Game Over (Lost)
+import pygame
+from pygame import mixer
+from classes import Text
+
+def over(game, next_btn, player):
+    player.x = 455
+    player.y = 375
+
+    for i in range(0,4):
+        mixer.Sound('resources/sounds/explosion.wav').play()
+
+    while True:
+        end = False
+        game.screen.fill((250,0,0))
+        lost_text = Text(txt="GAME OVER", color=(0,0,0), coord=(300,100))
+        lost_text.display(game)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return  # exit play and return to caller
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return
+                elif event.key == pygame.K_SPACE:
+                    end = True
+
+        player.heart_status(game)
+
+        if next_btn.draw(game, True):
+            end = True
+        if end:
+            mixer.Sound('resources/sounds/explosion.wav').play()
+            return
+        pygame.display.flip()
