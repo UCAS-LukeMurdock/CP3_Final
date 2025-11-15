@@ -152,7 +152,24 @@ class Knight(Character):
         self.hp = 5
         self.invincible = False
         self.invinc_start = 0
+        
+        # sword / attack state
         self.sword_ready = True
+        self.sword_active = False
+        self.sword_start = 0
+        self.sword_duration = 200          # ms sword stays visible
+        self.sword_cooldown = 800         # ms until next attack allowed
+        self.sword_cooldown_start = 0
+
+        # preload sword image (adjust scale as needed)
+        try:
+            self.sword_img = pygame.image.load('resources/player/bold_swing.png').convert_alpha()
+        except Exception:
+            # fallback visible rect if image missing
+            self.sword_img = pygame.Surface((48,16), pygame.SRCALPHA)
+            pygame.draw.rect(self.sword_img, (220,220,220,200), self.sword_img.get_rect())
+        self.sword_img = pygame.transform.scale(self.sword_img, (64,32))
+        self.sword_rect = self.sword_img.get_rect()
 
     def move(self):
         self.x += self.x_change
@@ -169,6 +186,32 @@ class Knight(Character):
             self.y = (600-128)
 
         self.rect.topleft = (self.x, self.y)
+
+        # update sword timers/state each frame
+        self._update_sword_state()
+
+    def _update_sword_state(self):
+        now = pygame.time.get_ticks()
+        if self.sword_active and now - self.sword_start >= self.sword_duration:
+            # deactivate sword and start cooldown
+            self.sword_active = False
+            self.sword_cooldown_start = now
+        if not self.sword_ready and not self.sword_active and self.sword_cooldown_start:
+            if now - self.sword_cooldown_start >= self.sword_cooldown:
+                self.sword_ready = True
+                self.sword_cooldown_start = 0
+
+    def display(self, game):
+        # draw player
+        super().display(game)
+
+        # draw sword when active (position it relative to player)
+        if self.sword_active:
+            # example: position to the right and middle of the knight
+            sword_x = self.x + 70
+            sword_y = self.y + (self.img.get_height() // 2) - (self.sword_img.get_height() // 2)
+            self.sword_rect.topleft = (sword_x, sword_y)
+            game.screen.blit(self.sword_img, self.sword_rect)
 
     def take_damage(self):
         if not self.invincible:
@@ -209,7 +252,11 @@ class Knight(Character):
         #     bullet.state = "fire"
         #     mixer.Sound('resources/laser.wav').play()
 
-        pygame.image.load('resources/player/bold_swing.png')
+        if self.sword_ready and not self.sword_active:
+            self.sword_active = True
+            self.sword_start = pygame.time.get_ticks()
+            self.sword_ready = False
+            # position will be updated on next display call / frame
 
 
 
@@ -219,6 +266,7 @@ class Knight(Character):
 class Enemy(Character):
     def __init__(self, x, y, change=0.15):
         super().__init__(x, y)
+        self.alive = True
         self.change = change
 
     def move(self, player):
@@ -259,7 +307,18 @@ class Enemy(Character):
 
         self.rect.topleft = (self.x, self.y)
         
-
+    def is_hit(self, sword_rect):
+        """
+        Return True and mark dead if this enemy collides with the sword_rect.
+        The caller (e.g., play_rooms.py) should remove the enemy from lists when True.
+        """
+        # Return True if alive and collides with sword rect; mark dead.
+        if not self.alive:
+            return False
+        if sword_rect and self.rect.colliderect(sword_rect):
+            self.alive = False
+            return True
+        return False
 
     def collide_check(self, other):
         # distance = math.sqrt((self.x - player.x)**2 + ((self.y - player.y)**2))

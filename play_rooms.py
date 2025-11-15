@@ -4,8 +4,10 @@ import random as r
 from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
 
 def play(game):
+    
+    clock = pygame.time.Clock()
 
-    next = Button(500-128/2,300-128/2, 'resources/buttons/continue.png')
+    next_btn = Button(500-128/2, 300-128/2, 'resources/buttons/continue.png')
     rooms = [Room('resources/backgrounds/ocean.png', Text(txt="Ocean", coord=(400,5))),
             Room('resources/backgrounds/jungle.png', Text(txt="Jungle", coord=(400,5))),
             Room('resources/backgrounds/rock.png', Text(txt="Mountain", coord=(355,5))),
@@ -18,59 +20,66 @@ def play(game):
         dif = 1
     elif game.mode == "hard":
         dif = 2
+    else:
+        dif = 1
+        
     speed = 0.05 +.05*dif
 
     for room in rooms:
         player.x = 10
         player.y = 250
+        player.rect.topleft = (player.x, player.y)
 
-        if room.name=="Ocean":
-            for i in range(0,2+dif):
-                room.oppons.append(Urchin(r.randint(550,850),r.randint(10,450), speed))
-        elif room.name=="Jungle":
-            for i in range(0,3+dif):
-                room.oppons.append(Snake(r.randint(550,850),r.randint(10,450), speed))
-        elif room.name=="Mountain":
-            for i in range(0,4+dif):
-                room.oppons.append(Wolf(r.randint(550,850),r.randint(10,450), speed))
-        elif room.name=="Cave":
-            room.oppons.append(Dragon(r.randint(550,850),r.randint(10,450), speed))
-            
+        # spawn opponents based on room name (room.name is a Text object)
+        if getattr(room.name, "txt", "") == "Ocean":
+            for i in range(0, 2 + dif):
+                room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), speed))
+        elif getattr(room.name, "txt", "") == "Jungle":
+            for i in range(0, 3 + dif):
+                room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), speed))
+        elif getattr(room.name, "txt", "") == "Mountain":
+            for i in range(0, 4 + dif):
+                room.oppons.append(Wolf(r.randint(550, 850), r.randint(10, 450), speed))
+        elif getattr(room.name, "txt", "") == "Cave":
+            room.oppons.append(Dragon(r.randint(550, 850), r.randint(10, 450), speed))
+
+        # room loop
         while player.hp > 0:
+            # draw background and room title
             room.display_back(game)
             room.name.display(game)
 
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
-                    exit()
+                    return  # exit play and return to caller
+                
 
-                keys = pygame.key.get_pressed()
                 if event.type == pygame.KEYDOWN:
-                    if keys[pygame.K_LEFT]:
-                        player.x_change = -0.3
-                    if keys[pygame.K_RIGHT]:
-                        player.x_change = 0.3
-                    if keys[pygame.K_UP]:
-                        player.y_change = -0.3
-                    if keys[pygame.K_DOWN]:
-                        player.y_change = 0.3
-                        
-                    if keys[pygame.K_SPACE]:
-                        if player.sword_ready == True:
-                            player.sword_attack(game)
-                        
+                    if event.key == pygame.K_LEFT:
+                        player.x_change = -3
+                    elif event.key == pygame.K_RIGHT:
+                        player.x_change = 3
+                    elif event.key == pygame.K_UP:
+                        player.y_change = -3
+                    elif event.key == pygame.K_DOWN:
+                        player.y_change = 3
+
+                    # attack on space
+                    elif event.key == pygame.K_SPACE:
+                        player.attack()
+
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT and not keys[pygame.K_LEFT]:
-                            player.x_change = 0
-                    elif event.key == pygame.K_RIGHT and not keys[pygame.K_RIGHT]:
-                            player.x_change = 0
-                    elif event.key == pygame.K_UP and not keys[pygame.K_UP]:
+                    if event.key == pygame.K_LEFT and not pygame.key.get_pressed()[pygame.K_LEFT]:
+                        player.x_change = 0
+                    elif event.key == pygame.K_RIGHT and not pygame.key.get_pressed()[pygame.K_RIGHT]:
+                        player.x_change = 0
+                    elif event.key == pygame.K_UP and not pygame.key.get_pressed()[pygame.K_UP]:
                         player.y_change = 0
-                    elif event.key == pygame.K_DOWN and not keys[pygame.K_DOWN]:
+                    elif event.key == pygame.K_DOWN and not pygame.key.get_pressed()[pygame.K_DOWN]:
                         player.y_change = 0
+                    
             
-            if room.oppons != []:
                 # Changes
 
                 #  for enemy in enemies:
@@ -79,20 +88,38 @@ def play(game):
                     #     enemies = []
                     #     game_over = True
 
-                for oppon in room.oppons:
-                    oppon.move(player)
-
-                    oppon.collide_check(player)
+            for oppon in room.oppons:
+                oppon.move(player)
+                oppon.collide_check(player)
                     
-                player.move()
+            player.move()
                 
 
                 # Set Items
-                for oppon in room.oppons:
-                    oppon.display(game)
-                player.display(game)
-                player.invincibility(game)
-                player.heart_status(game)
+            for oppon in room.oppons:
+                oppon.display(game)
+            player.display(game)
+            player.invincibility(game)
+            player.heart_status(game)
+
+            # sword collision: remove any opponents hit while sword active
+            if getattr(player, "sword_active", False):
+                for oppon in room.oppons[:]:  # iterate over a shallow copy to allow removal
+                    if oppon.is_hit(player.sword_rect):
+                        try:
+                            room.oppons.remove(oppon)
+                        except ValueError:
+                            pass  # already removed
+
+            # if room cleared, wait for next button press to continue
+            if not room.oppons:
+                if next_btn.draw(game, True):
+                    break
+
+            pygame.display.flip()
+            clock.tick(60)
+
+    return
                 
 
                 # for i, enemy in enumerate(enemies):
@@ -110,11 +137,11 @@ def play(game):
 
                 #     if enemies == []:
                 #         round = create_enemies(round)
-            else:
-                if next.draw(game, True):
-                    break
+#                else:
+#                    if next.draw(game, True):
+#                        break
 
-            pygame.display.flip()
+#                pygame.display.flip()
 
 
     #     for event in pygame.event.get():
