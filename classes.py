@@ -1,6 +1,7 @@
 # Classes File
 import pygame, math
 from abc import ABC, abstractmethod
+from pygame import mixer
 
 class WholeGame:
     def __init__(self, screen, mode=''):
@@ -216,6 +217,7 @@ class Knight(Character):
     def take_damage(self):
         if not self.invincible:
             self.hp -= 1
+            mixer.Sound('resources/sounds/explosion.wav').play()
 
             self.invincible = True
             self.invinc_start = pygame.time.get_ticks()
@@ -256,6 +258,7 @@ class Knight(Character):
             self.sword_active = True
             self.sword_start = pygame.time.get_ticks()
             self.sword_ready = False
+            mixer.Sound('resources/sounds/laser.wav').play()
             # position will be updated on next display call / frame
 
 

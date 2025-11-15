@@ -1,5 +1,6 @@
 # File to play through the rooms
 import pygame
+from pygame import mixer
 import random as r
 from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
 
@@ -23,7 +24,7 @@ def play(game):
     else:
         dif = 1
         
-    speed = 0.05 +.05*dif
+    opon_speeds = 0.15 +.05*dif
 
     for room in rooms:
         player.x = 10
@@ -33,18 +34,19 @@ def play(game):
         # spawn opponents based on room name (room.name is a Text object)
         if getattr(room.name, "txt", "") == "Ocean":
             for i in range(0, 2 + dif):
-                room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), speed))
+                room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), opon_speeds))
         elif getattr(room.name, "txt", "") == "Jungle":
             for i in range(0, 3 + dif):
-                room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), speed))
+                room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), opon_speeds))
         elif getattr(room.name, "txt", "") == "Mountain":
             for i in range(0, 4 + dif):
-                room.oppons.append(Wolf(r.randint(550, 850), r.randint(10, 450), speed))
+                room.oppons.append(Wolf(r.randint(550, 850), r.randint(10, 450), opon_speeds))
         elif getattr(room.name, "txt", "") == "Cave":
-            room.oppons.append(Dragon(r.randint(550, 850), r.randint(10, 450), speed))
+            room.oppons.append(Dragon(r.randint(550, 850), r.randint(10, 450), opon_speeds))
 
         # room loop
         while player.hp > 0:
+            next = False
             # draw background and room title
             room.display_back(game)
             room.name.display(game)
@@ -67,7 +69,10 @@ def play(game):
 
                     # attack on space
                     elif event.key == pygame.K_SPACE:
-                        player.attack()
+                        if not room.oppons:
+                            next = True
+                        else:
+                            player.attack()
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT and not pygame.key.get_pressed()[pygame.K_LEFT]:
@@ -108,16 +113,42 @@ def play(game):
                     if oppon.is_hit(player.sword_rect):
                         try:
                             room.oppons.remove(oppon)
+                            mixer.Sound('resources/sounds/explosion.wav').play()
                         except ValueError:
                             pass  # already removed
 
             # if room cleared, wait for next button press to continue
             if not room.oppons:
                 if next_btn.draw(game, True):
-                    break
+                    next = True
+            if next:
+                break
 
             pygame.display.flip()
             clock.tick(60)
+
+        if player.hp <= 0:
+            mixer.Sound('resources/sounds/explosion.wav').play()
+            while True:
+                end = False
+                game.screen.fill((0,0,0))
+                lost_text = Text(txt="GAME OVER", coord=(300,100))
+                lost_text.display(game)
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        return  # exit play and return to caller
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            end = True
+
+                if next_btn.draw(game, True):
+                    end = True
+                if end:
+                    mixer.Sound('resources/sounds/explosion.wav').play()
+                    return
+                pygame.display.flip()
+                
 
     return
                 

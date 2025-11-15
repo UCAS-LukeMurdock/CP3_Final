@@ -2,7 +2,6 @@
 
 import pygame
 from pygame import mixer
-
 from classes import WholeGame, Button, Text
 from play_rooms import play
 
@@ -15,7 +14,8 @@ def main():
     screen.fill((0,0,0))
     game = WholeGame(screen)
 
-    pygame.display.set_caption("Adventure: Dragon??????????")
+    title = "Dragon Adventure"
+    pygame.display.set_caption(title)
     icon = pygame.transform.scale(pygame.image.load('resources/dragon_icon.png'), (32,32))
     pygame.display.set_icon(icon)
 
@@ -23,11 +23,11 @@ def main():
     background = pygame.transform.scale(background, (1000,600))
 
     # Background music
-    # mixer.music.load('resources/background.wav')
-    # mixer.music.play(-1)
+    mixer.music.load('resources/sounds/background.wav')
+    mixer.music.play(-1)
 
-    title = Text(txt="Adventure: Dragon??", coord=(200,5))
-    help_txt = " - Use arrow keys for movement\n\n - Press {key} for attack\n\n - Press {key} to use special abilities"
+    title = Text(txt=title, coord=(225,5))
+    help_txt = " - Use arrow keys for movement\n\n - Press space for attack\n\n - Press {key} to use special abilities"
     help = Text(size=20, txt=help_txt, coord=(70,300))
 
     help_button = Button(175,150, 'resources/buttons/help.png', .8)
