@@ -1,26 +1,14 @@
 # Pseudocode
 
-""" Knight Attacking ---------------------------------
 
-Class Knight
-    Function for attack (self, game)
-        if sword ready:
-            load sword img
-            set x and y
-            make rect
-            display sword (game.screen.blit())
-            set x and y somewhere off screen (I think)
+""" Wolf Attacking ---------------------------------
+the wolf will randomly swipe and if it collides with the knight then 
+the knight loses one health point
 
-Class Enemy
-    Function for is_hit (self, sword)
-        if enemy collide with sword
-            kill enemy, etc
-            destry off oppon list (this might be done in play_rooms.py)
-
-# This code is not complete yet for sure becuase it doesn't display the sword for long and there is no sword_ready cooldown
-# Gonna need to add time stuff
-
+places the wolf slash animation pop up evertime the wolf swipes
+resources\enemies\claw_slash.png
 """
+
 
 
 """ Knight Shield ------------------------------------
