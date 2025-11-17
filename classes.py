@@ -1,5 +1,5 @@
 # Classes File
-import pygame, math
+import pygame, math, random
 from abc import ABC, abstractmethod
 from pygame import mixer
 
@@ -354,6 +354,23 @@ class Wolf(Enemy):
         super().__init__(x,y, change)
 
 class Dragon(Enemy):
-    def __init__(self, x,y, change=0.15):
+    def __init__(self, x,y, change=0.2):
         self.img_path = 'resources/enemies/blue_dragon.png'
         super().__init__(x,y, change)
+        self.img = pygame.transform.flip(self.img, True, False)
+        self.x = 800
+        self.hp = 5
+    
+    def move(self, player):
+        chance = random.randint(0,100)
+        if chance == 100:
+            self.change = -(self.change)
+        self.y += self.change
+
+        if self.y < 10:
+            self.y = 10
+        if self.y > 400:
+            self.y = 400
+        
+
+        self.rect.topleft = (self.x, self.y)

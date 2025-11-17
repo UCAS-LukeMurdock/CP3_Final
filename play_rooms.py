@@ -34,6 +34,10 @@ def play_room(game, player, room, next_btn, clock):
                     player.y_change = -3
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     player.y_change = 3
+
+                # GET RID OF IN FUTURE - Skip button
+                elif event.key == pygame.K_q:
+                    return True
                 
                 # elif event.key == pygame.K_z:
                     # player.invincible = True
