@@ -349,9 +349,80 @@ class Snake(Enemy):
         super().__init__(x,y, change)
 
 class Wolf(Enemy):
-    def __init__(self, x,y, change=0.15):
+    # I dont know if it works completely rn and I don't understand all of it yet
+    def __init__(self, x, y, change=0.15):
         self.img_path = 'resources/enemies/wolf.png'
-        super().__init__(x,y, change)
+        super().__init__(x, y, change)
+
+        # Load slash asset once per wolf; fallback if missing
+        try:
+            self.slash_img = pygame.image.load('resources/enemies/claw_slash.png').convert_alpha()
+        except Exception:
+            self.slash_img = self.img
+        self.slash_img = pygame.transform.scale(self.slash_img, (64, 64))  # tweak size if needed
+
+        # Slash state (no cooldown, start by random chance)
+        self.is_slashing = False
+        self.slash_start = 0
+        self.slash_duration = 300      # ms the slash is visible (tweak)
+        self.slash_hit_done = False    # ensure one hit per slash
+
+        # Track last seen player x so display can orient slash
+        self.last_player_x = None
+
+    def move(self, player):
+        # Keep chase behaviour
+        super().move(player)
+
+        # Remember where the player was (used by display for orientation)
+        self.last_player_x = player.x
+
+        now = pygame.time.get_ticks()
+
+        # If currently slashing, handle hit-check and ending the slash
+        if self.is_slashing:
+            # position slash toward the player
+            if self.last_player_x is not None and self.last_player_x < self.x:
+                slash_x = self.x - 48  # left side
+            else:
+                slash_x = self.x + 48  # right side
+            slash_y = self.y + 8
+            slash_rect = self.slash_img.get_rect(topleft=(slash_x, slash_y))
+
+            # single hit per slash
+            if not self.slash_hit_done and slash_rect.colliderect(player.rect):
+                player.take_damage()
+                self.slash_hit_done = True
+
+            # end slash after duration
+            if now - self.slash_start >= self.slash_duration:
+                self.is_slashing = False
+                self.slash_hit_done = False
+
+            return
+
+        # If not slashing, maybe start one randomly (frame-dependent) make sure there is a import random somewhere
+        # probability per frame to start a slash (tune this)
+        start_prob = 0.01
+        if random.random() < start_prob:
+            self.is_slashing = True
+            self.slash_start = now
+            self.slash_hit_done = False
+            # optional: play a sound here (mixer.Sound(...).play())
+
+    def display(self, game):
+        # Draw the wolf and the slash (if active)
+        game.screen.blit(self.img, (self.x, self.y))
+
+        if self.is_slashing:
+            # orient slash toward last seen player x
+            if self.last_player_x is not None and self.last_player_x < self.x:
+                slash_x = self.x - 48
+            else:
+                slash_x = self.x + 48
+            slash_y = self.y + 8
+            game.screen.blit(self.slash_img, (slash_x, slash_y))
+
 
 class Dragon(Enemy):
     def __init__(self, x,y, change=0.2):
