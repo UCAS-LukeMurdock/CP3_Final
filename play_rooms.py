@@ -18,14 +18,6 @@ def play_room(game, player, room, next_btn, clock):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
-                # if keys[pygame.K_LEFT] or event.key == pygame.K_a:
-                #     player.x_change = -3
-                # elif keys[pygame.K_RIGHT] or event.key == pygame.K_d:
-                #     player.x_change = 3
-                # elif keys[pygame.K_UP] or event.key == pygame.K_w:
-                #     player.y_change = -3
-                # elif keys[pygame.K_DOWN] or event.key == pygame.K_s:
-                #     player.y_change = 3
                 elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     player.x_change = -3
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
@@ -54,13 +46,13 @@ def play_room(game, player, room, next_btn, clock):
                         player.attack()
 
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT: # and not pygame.key.get_pressed()[pygame.K_LEFT]: # or event.key == pygame.K_LEFT and not pygame.key.get_pressed()[pygame.K_LEFT]:
+                if event.key == pygame.K_LEFT:
                     player.x_change = 0
-                elif event.key == pygame.K_RIGHT: # and not pygame.key.get_pressed()[pygame.K_RIGHT]:
+                elif event.key == pygame.K_RIGHT:
                     player.x_change = 0
-                elif event.key == pygame.K_UP: # and not pygame.key.get_pressed()[pygame.K_UP]:
+                elif event.key == pygame.K_UP:
                     player.y_change = 0
-                elif event.key == pygame.K_DOWN: # and not pygame.key.get_pressed()[pygame.K_DOWN]:
+                elif event.key == pygame.K_DOWN:
                     player.y_change = 0
 
                 # elif event.key == pygame.K_z:
@@ -69,15 +61,10 @@ def play_room(game, player, room, next_btn, clock):
         
             # Changes
 
-            #  for enemy in enemies:
-                # enemy.move()
-                # if enemy.lose():
-                #     enemies = []
-                #     game_over = True
-
         for oppon in room.oppons:
             oppon.move(player)
             oppon.collide_check(player)
+            
                 
         player.move()
             
@@ -85,6 +72,8 @@ def play_room(game, player, room, next_btn, clock):
             # Set Items
         for oppon in room.oppons:
             oppon.display(game)
+            if room.name == "Cave" and game.mode != 'easy':
+                oppon.display_health(game)
         player.display(game)
         player.heart_status(game)
 
@@ -94,7 +83,6 @@ def play_room(game, player, room, next_btn, clock):
                 if oppon.is_hit(player.sword_rect):
                     try:
                         room.oppons.remove(oppon)
-                        mixer.Sound('resources/sounds/explosion.wav').play()
                     except ValueError:
                         pass  # already removed
 

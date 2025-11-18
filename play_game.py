@@ -34,19 +34,6 @@ def play(game):
         player.rect.topleft = (player.x, player.y)
 
         # spawn opponents based on room name (room.name is a Text object)
-
-        # if getattr(room.name, "txt", "") == "Ocean":
-        #     for i in range(0, 2 + dif):
-        #         room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), opon_speeds))
-        # elif getattr(room.name, "txt", "") == "Jungle":
-        #     for i in range(0, 3 + dif):
-        #         room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), opon_speeds))
-        # elif getattr(room.name, "txt", "") == "Mountain":
-        #     for i in range(0, 4 + dif):
-        #         room.oppons.append(Wolf(r.randint(550, 850), r.randint(10, 450), opon_speeds))
-        # elif getattr(room.name, "txt", "") == "Cave":
-        #     room.oppons.append(Dragon(r.randint(550, 850), r.randint(10, 450), opon_speeds + 1))
-
         if room.name == "Ocean":
             for i in range(0, 2 + dif):
                 room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), opon_speeds))
@@ -57,103 +44,12 @@ def play(game):
             for i in range(0, 4 + dif):
                 room.oppons.append(Wolf(r.randint(550, 850), r.randint(10, 450), opon_speeds))
         elif room.name == "Cave":
-            room.oppons.append(Dragon(r.randint(550, 850), r.randint(10, 450), opon_speeds + 1))
+            room.oppons.append(Dragon(r.randint(550, 850), r.randint(10, 450), hp = 50*dif, change = opon_speeds + 1))
+
 
         if play_room(game, player, room, next_btn, clock) == False:
             return
-
-        # room loop
-        # while player.hp > 0:
-        #     next = False
-        #     # draw background and room title
-        #     room.display_back(game)
-        #     room.name.display(game)
-
-        #     for event in pygame.event.get():
-
-        #         if event.type == pygame.QUIT:
-        #             return  # exit play and return to caller
-                
-        #         keys = pygame.key.get_pressed()
-        #         if event.type == pygame.KEYDOWN:
-        #             if event.key == pygame.K_ESCAPE:
-        #                 return
-        #             # if keys[pygame.K_LEFT] or event.key == pygame.K_a:
-        #             #     player.x_change = -3
-        #             # elif keys[pygame.K_RIGHT] or event.key == pygame.K_d:
-        #             #     player.x_change = 3
-        #             # elif keys[pygame.K_UP] or event.key == pygame.K_w:
-        #             #     player.y_change = -3
-        #             # elif keys[pygame.K_DOWN] or event.key == pygame.K_s:
-        #             #     player.y_change = 3
-        #             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-        #                 player.x_change = -3
-        #             elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-        #                 player.x_change = 3
-        #             elif event.key == pygame.K_UP or event.key == pygame.K_w:
-        #                 player.y_change = -3
-        #             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-        #                 player.y_change = 3
-
-        #             # attack on space
-        #             elif keys[pygame.K_SPACE]:
-        #                 if not room.oppons:
-        #                     next = True
-        #                 else:
-        #                     player.attack()
-
-        #         if event.type == pygame.KEYUP:
-        #             if event.key == pygame.K_LEFT and not pygame.key.get_pressed()[pygame.K_LEFT]: # or event.key == pygame.K_LEFT and not pygame.key.get_pressed()[pygame.K_LEFT]:
-        #                 player.x_change = 0
-        #             elif event.key == pygame.K_RIGHT and not pygame.key.get_pressed()[pygame.K_RIGHT]:
-        #                 player.x_change = 0
-        #             elif event.key == pygame.K_UP and not pygame.key.get_pressed()[pygame.K_UP]:
-        #                 player.y_change = 0
-        #             elif event.key == pygame.K_DOWN and not pygame.key.get_pressed()[pygame.K_DOWN]:
-        #                 player.y_change = 0
-                    
-            
-        #         # Changes
-
-        #         #  for enemy in enemies:
-        #             # enemy.move()
-        #             # if enemy.lose():
-        #             #     enemies = []
-        #             #     game_over = True
-
-        #     for oppon in room.oppons:
-        #         oppon.move(player)
-        #         oppon.collide_check(player)
-                    
-        #     player.move()
-                
-
-        #         # Set Items
-        #     for oppon in room.oppons:
-        #         oppon.display(game)
-        #     player.display(game)
-        #     player.invincibility(game)
-        #     player.heart_status(game)
-
-        #     # sword collision: remove any opponents hit while sword active
-        #     if getattr(player, "sword_active", False):
-        #         for oppon in room.oppons[:]:  # iterate over a shallow copy to allow removal
-        #             if oppon.is_hit(player.sword_rect):
-        #                 try:
-        #                     room.oppons.remove(oppon)
-        #                     mixer.Sound('resources/sounds/explosion.wav').play()
-        #                 except ValueError:
-        #                     pass  # already removed
-
-        #     # if room cleared, wait for next button press to continue
-        #     if not room.oppons:
-        #         if next_btn.draw(game, True):
-        #             next = True
-        #     if next:
-        #         break
-
-        #     pygame.display.flip()
-        #     clock.tick(60)
+        
         
         if player.hp <= 0:
             next_btn.rect.topleft = (500-128/2, 300-128/2)
@@ -170,6 +66,77 @@ def play(game):
 
 
 
+# class Bullet:
+#     def __init__(self, x=0, y=0):
+#         self.state = "ready"
+#         self.x = x
+#         self.y = y
+#         self.change = -1
+#         self.img = pygame.image.load('resources/bullet.png')
+#         self.rotated = pygame.transform.rotate(self.img, 90)
+
+#     def shoot(self):
+#         self.change = -1
+#         screen.blit(self.rotated, (self.x, self.y))
+        
+#     def move(self):
+#         self.y += self.change
+#         if self.y <= 0:
+#             self.state = "ready"
+
+
+# # Player Class
+# class Player:
+#     def __init__(self, x, change = 0):
+#         self.img = pygame.image.load('resources/spaceship.png')
+#         self.x = x
+#         self.y = 600-69
+#         self.change = change
+#         self.score = 0
+    
+#     def player_set(self):
+#         screen.blit(self.img, (self.x, self.y))
+
+#     def move(self):
+#         self.x += self.change
+#         # Borders of screen
+#         if self.x <= 0:
+#             self.x = 0
+#         elif self.x >= (800-64):
+#             self.x = 736
+
+
+# class Enemy:
+#     def __init__(self, x, y):
+#         self.img = pygame.image.load('resources/alien.png')
+#         self.x = x
+#         self.y = y
+#         self.x_change = 0.2
+#         self.y_change = 45
+
+#     def enemy_set(self):
+#         screen.blit(self.img, (self.x, self.y))
+
+#     def move(self):
+#         self.x += self.x_change
+#         # Borders of screen
+#         if self.x <= 0:
+#             self.x_change = 0.2
+#             self.y += self.y_change
+#         elif self.x >= (800-64):
+#             self.x_change = -0.2
+#             self.y += self.y_change
+
+#     def is_hit(self, bullet):
+#         distance = math.sqrt((self.x - bullet.x)**2 + ((self.y - bullet.y)**2))
+#         if distance < 48: # the sum of half the width of the bullet and of the alien
+#             return True
+#         return False
+    
+#     def lose(self):
+#         if self.y > 540:
+#             return True
+#         return False
 
 
                 # for i, enemy in enumerate(enemies):
