@@ -353,10 +353,12 @@ class Wolf(Enemy):
     def __init__(self, x, y, change=0.15):
         self.img_path = 'resources/enemies/wolf.png'
         super().__init__(x, y, change)
+        
 
         # Load slash asset once per wolf; fallback if missing
         try:
             self.slash_img = pygame.image.load('resources/enemies/claw_slash.png').convert_alpha()
+            self.slash_img = pygame.transform.flip(self.slash_img, True, False)
         except Exception:
             self.slash_img = self.img
         self.slash_img = pygame.transform.scale(self.slash_img, (64, 64))  # tweak size if needed
@@ -431,6 +433,10 @@ class Dragon(Enemy):
         self.img = pygame.transform.flip(self.img, True, False)
         self.x = 800
         self.hp = 5
+
+        #The two different attacks for the dragon image
+        #self.fireball_img = pygame.image.load('resources\enemies\\fire_ball.png').convert_alpha()
+        #self.firecone_img = pygame.image.load('resources\enemies\\fire_cone.png').convert_alpha()
     
     def move(self, player):
         chance = random.randint(0,100)
