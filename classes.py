@@ -66,6 +66,7 @@ class Button:
             if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
                 self.clicked = True
                 action = True
+                mixer.Sound('resources/sounds/laser.wav').play()
         else:
             # Draw normally when not hovered
             game.screen.blit(self.img, self.rect)
@@ -76,41 +77,6 @@ class Button:
 
         return action
 
-        
-
-#     def __init__(self, x, y, img, scale=1):
-#         self.img = pygame.image.load(img).convert_alpha()
-#         self.img = pygame.transform.scale(
-#             self.img,
-#             (int(self.img.get_width() * scale), int(self.img.get_height() * scale))
-#         )
-#         self.rect = self.img.get_rect(topleft=(x, y))
-#         self.clicked = False
-
-
-# class Button:
-#     def __init__(self, x,y, img, scale=1):
-#         self.x = x
-#         self.y = y
-#         self.img = pygame.image.load(img)
-#         self.img = pygame.transform.scale(self.img, (int(self.img.get_width()*scale), int(self.img.get_height()*scale)))
-#         self.rect = self.img.get_rect()
-#         self.rect.x = x
-#         self.rect.y = y
-#         self.clicked = False
-
-#     def draw(self): # Draws the button and returns True if clicked
-#         self.clicked = False
-#         action = False
-#         pos = pygame.mouse.get_pos()
-
-#         if self.rect.collidepoint(pos):
-#             if pygame.mouse.get_pressed()[0]==1 and self.clicked == False:
-#                 self.clicked = True
-#                 action = True
-
-#         screen.blit(self.img, self.rect)
-#         return action
 
 class Room:
     def __init__(self, back_img, name):
@@ -320,6 +286,7 @@ class Enemy(Character):
         if not self.alive:
             return False
         if sword_rect and self.rect.colliderect(sword_rect):
+            mixer.Sound('resources/sounds/explosion.wav').play()
             self.alive = False
             return True
         return False
@@ -425,12 +392,12 @@ class Wolf(Enemy):
 
 
 class Dragon(Enemy):
-    def __init__(self, x,y, change=0.2):
+    def __init__(self, x,y, hp, change=0.2):
         self.img_path = 'resources/enemies/blue_dragon.png'
         super().__init__(x,y, change)
         self.img = pygame.transform.flip(self.img, True, False)
         self.x = 800
-        self.hp = 5
+        self.hp = hp
     
     def move(self, player):
         chance = random.randint(0,100)
@@ -443,5 +410,31 @@ class Dragon(Enemy):
         if self.y > 400:
             self.y = 400
         
-
         self.rect.topleft = (self.x, self.y)
+
+    def is_hit(self, sword_rect):
+        """
+        Return True and mark dead if the dragon runs out of health from colliding with the sword_rect.
+        The caller (e.g., play_rooms.py) should remove the enemy from lists when True.
+        """
+        if not self.alive:
+            return False
+        if sword_rect and self.rect.colliderect(sword_rect):
+            mixer.Sound('resources/sounds/explosion.wav').play()
+            if self.hp > 1:
+                self.hp -= 1
+            else:
+                self.alive = False
+                return True
+        return False
+    
+    def display_health(self, game):
+        # # Display dragon health as hearts
+        # heart_img = pygame.image.load('resources/player/hearts/heart_5.png')
+        # heart_img = pygame.transform.scale(heart_img, (30,30))
+        # for i in range(self.hp):
+        #     game.screen.blit(heart_img, (20 + i*35, 20))
+
+        dragon_health = Text(size=30, txt=f"Dragon HP: {self.hp}", coord=(750,20), color=(255,0,0))
+        dragon_health.display(game)
+

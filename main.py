@@ -76,29 +76,8 @@ def main():
         
         if game.mode != '':
             play(game)
-
-            # else:
-
-            
-        # else:
-        #     screen.blit(game_over_txt, (200,250))
-        #     # restart_font = pygame.font.Font('freesansbold.ttf', 32)
-        #     # restart_txt = restart_font.render(f"RESTART", True, (255,255,255))
-        #     # button = Button(285,375, restart_txt, 0)
-        #     button = Button(350,350, 'resources/restart.png', 0.2)
-        #     game_over = button.draw()
-        #     round = 0
-        #     round = create_enemies(round)
-            
-        # player.player_set()
         
 
-
-        
         pygame.display.flip()
 
 main()
-
-
-# TO DO:
-    # Add Collision 
