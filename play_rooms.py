@@ -64,8 +64,14 @@ def play_room(game, player, room, next_btn, clock):
         for oppon in room.oppons:
             oppon.move(player)
             oppon.collide_check(player)
+            if room.name == "Jungle":
+                if oppon.poison_ready:
+                    oppon.try_shoot(player)
+                else:
+                    oppon.move_poison()
+                    oppon.display_poison(game)
+                    oppon.poison_check(player)
             
-                
         player.move()
             
 
@@ -78,7 +84,7 @@ def play_room(game, player, room, next_btn, clock):
         player.heart_status(game)
 
         # sword collision: remove any opponents hit while sword active
-        if getattr(player, "sword_active", False):
+        if player.sword_active == True:
             for oppon in room.oppons[:]:  # iterate over a shallow copy to allow removal
                 if oppon.is_hit(player.sword_rect):
                     try:

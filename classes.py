@@ -314,6 +314,51 @@ class Snake(Enemy):
         self.img_path = 'resources/enemies/snake.png'
         super().__init__(x,y, change)
 
+        self.poison_img = pygame.image.load('resources/enemies/poison.png').convert_alpha()
+        self.poison_img = pygame.transform.scale(self.poison_img, (32,32))
+        self.poison_ready = True
+        self.poison_x = x
+        self.poison_y = y
+        self.poison_change = 2
+        # self.poison_x_change = 0.3
+        # self.poison_y_change = 0.3
+        self.poison_rect = self.poison_img.get_rect(topleft=(self.poison_x, self.poison_y))
+        self.target_x = None
+        self.target_y = None
+
+    def try_shoot(self, player):
+        if random.randint(0,500) == 0:
+            self.poison_ready = False
+            self.poison_x = self.x
+            self.poison_y = self.y
+            self.target_x = player.x
+            self.target_y = player.y
+
+    def poison_check(self, player):
+        if self.poison_rect.colliderect(player.rect):
+            player.take_damage()
+            self.poison_ready = True
+    
+    def move_poison(self):
+        if self.poison_x > self.target_x:
+            self.poison_x += -(self.poison_change)
+        else:
+            self.poison_x += abs(self.poison_change)
+        if self.poison_y > self.target_y:
+            self.poison_y += -(self.poison_change)
+        else:
+            self.poison_y += abs(self.poison_change)
+            
+        # Borders of screen
+        if self.poison_x <= 0 or self.poison_x >= (1000-128) or self.poison_y <= 0 or self.poison_y >= (600-128):
+            self.ready = True
+
+        self.poison_rect.topleft = (self.x, self.y)
+
+    def display_poison(self, game):
+        game.screen.blit(self.poison_img, (self.poison_x,self.poison_y))
+
+
 class Wolf(Enemy):
     # I dont know if it works completely rn and I don't understand all of it yet
     def __init__(self, x, y, change=0.15):
