@@ -286,7 +286,6 @@ class Enemy(Character):
         if not self.alive:
             return False
         if sword_rect and self.rect.colliderect(sword_rect):
-            mixer.Sound('resources/sounds/explosion.wav').play()
             self.alive = False
             return True
         return False
@@ -426,12 +425,13 @@ class Dragon(Enemy):
         if not self.alive:
             return False
         if sword_rect and self.rect.colliderect(sword_rect):
-            mixer.Sound('resources/sounds/explosion.wav').play()
+            # mixer.Sound('resources/sounds/explosion.wav').play()
             if self.hp > 1:
                 self.hp -= 1
             else:
                 self.alive = False
                 return True
+        
         return False
     
     def display_health(self, game):

@@ -83,8 +83,14 @@ def play_room(game, player, room, next_btn, clock):
                 if oppon.is_hit(player.sword_rect):
                     try:
                         room.oppons.remove(oppon)
+                        mixer.Sound('resources/sounds/explosion.wav').play()
                     except ValueError:
                         pass  # already removed
+            # if room.name == "Cave": 
+            #     if oppon.is_hit(player.sword_rect) and oppon.hp
+            #     if oppon.hp <= 0:
+            #         room.oppons.remove(oppon)
+            #         mixer.Sound('resources/sounds/explosion.wav').play()
 
         # if room cleared, wait for next button press to continue
         if not room.oppons:
