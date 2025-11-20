@@ -239,41 +239,62 @@ class Enemy(Character):
         self.alive = True
         self.change = change
 
+        #These are the variables so that the enemies move at random paces
+        # We can edit this compared to difficulty level
+        # Random stop/start behavior (milliseconds)
+        # How long they normally run before a possible stop (min, max)
+        self.run_min_ms = 800    # at least running
+        self.run_max_ms = 4500   # at most running
+
+        # How long they stay stopped when they do stop
+        self.pause_min_ms = 600  # at least paused
+        self.pause_max_ms = 2400 # at most paused
+
+        # state and next-timestamp for switching
+        self.is_paused = False
+        now = pygame.time.get_ticks()
+        # schedule first run period (they start moving immediately)
+        self.next_state_change = now + random.randint(self.run_min_ms, self.run_max_ms)
+
     def move(self, player):
-        # counter = 0
-        # if self.x > player.x:
-        #     counter += 1
-        #     if counter > 100:
-        #         self.x_change == -(self.change)
-        #         counter = 0
-        # else:
-        #     self.x_change == abs(self.change)
-        # if self.y > player.y:
-        #     self.y_change == -(self.change)
-        # else:
-        #     self.y_change == abs(self.change)
+        #for the randomness of when the enemies pause and keep going
 
-        # self.x += self.change
-        # self.y += self.change
+        now = pygame.time.get_ticks()
 
-        if self.x > player.x:
-            self.x += -(self.change)
+        # Handle pause/resume transitions
+        if self.is_paused:
+            # currently paused — check whether to resume
+            if now >= self.next_state_change:
+                self.is_paused = False
+                # schedule next pause after running for some time
+                self.next_state_change = now + random.randint(self.run_min_ms, self.run_max_ms)
         else:
-            self.x += abs(self.change)
-        if self.y > player.y:
-            self.y += -(self.change)
-        else:
-            self.y += abs(self.change)
-            
-        # Borders of screen
-        if self.x <= 0:
-            self.x = 0
-        elif self.x >= (1000-128):
-            self.x = (1000-128)
-        if self.y <= 0:
-            self.y = 0
-        elif self.y >= (600-128):
-            self.y = (600-128)
+            # currently running — check whether to start a pause
+            if now >= self.next_state_change:
+                self.is_paused = True
+                # schedule when the pause will end
+                self.next_state_change = now + random.randint(self.pause_min_ms, self.pause_max_ms)
+
+        # Only update position when not paused
+        if not self.is_paused:
+            if self.x > player.x:
+                self.x += -(self.change)
+            else:
+                self.x += abs(self.change)
+            if self.y > player.y:
+                self.y += -(self.change)
+            else:
+                self.y += abs(self.change)
+                
+            # Borders of screen
+            if self.x <= 0:
+                self.x = 0
+            elif self.x >= (1000-128):
+                self.x = (1000-128)
+            if self.y <= 0:
+                self.y = 0
+            elif self.y >= (600-128):
+                self.y = (600-128)
 
         self.rect.topleft = (self.x, self.y)
         
