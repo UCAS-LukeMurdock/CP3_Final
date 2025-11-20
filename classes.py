@@ -231,7 +231,8 @@ class Knight(Character):
 
 
 class Bullet:
-    def __init__(self, img_path):
+    def __init__(self, img_path, chance=150):
+        self.chance = chance
         self.img = pygame.image.load(img_path).convert_alpha()
         self.img = pygame.transform.scale(self.img, (32,32))
         self.x = 0
@@ -242,7 +243,7 @@ class Bullet:
         self.rect = self.img.get_rect(topleft=(self.x, self.y))
 
     def try_shoot(self, shooter, target):
-        if random.randint(0,150) == 0:
+        if random.randint(0,self.chance) == 0:
             self.active = True
             self.x = shooter.x
             self.y = shooter.y
@@ -486,7 +487,7 @@ class Dragon(Enemy):
         self.x = 800
         self.hp = hp
 
-        self.bullet = Bullet('resources/enemies/fire_ball.png')
+        self.bullet = Bullet('resources/enemies/fire_ball.png', 100)
 
         #The two different attacks for the dragon image
         #self.fireball_img = pygame.image.load('resources\enemies\\fire_ball.png').convert_alpha()
