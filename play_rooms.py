@@ -65,12 +65,11 @@ def play_room(game, player, room, next_btn, clock):
             oppon.move(player)
             oppon.collide_check(player)
             if room.name == "Jungle":
-                if oppon.poison_ready:
-                    oppon.try_shoot(player)
+                if oppon.bullet.active == False:
+                    oppon.bullet.try_shoot(oppon, player)
                 else:
-                    oppon.move_poison()
-                    oppon.display_poison(game)
-                    oppon.poison_check(player)
+                    oppon.bullet.move()
+                    oppon.bullet.hit_check(player)
             
         player.move()
             
@@ -80,6 +79,8 @@ def play_room(game, player, room, next_btn, clock):
             oppon.display(game)
             if room.name == "Cave" and game.mode != 'easy':
                 oppon.display_health(game)
+            if room.name == "Jungle" and oppon.bullet.active:
+                oppon.bullet.display(game)
         player.display(game)
         player.heart_status(game)
 
