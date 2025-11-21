@@ -174,7 +174,6 @@ class Knight(Character):
             now = pygame.time.get_ticks()
             if now - self.invinc_start >= 2000: # if the player has been invincible for 2 secs 
                 self.invincible = False
-                print("Invincibility ended!")
             else:
                 bright_image = self.img.copy()
                 bright_image.fill((60, 60, 60), special_flags=pygame.BLEND_RGB_ADD)
@@ -315,14 +314,31 @@ class Enemy(Character):
 
         # Only update position when not paused
         if not self.is_paused:
+
             if self.x > player.x:
-                self.x += -(self.change)
+                self.x += -(abs(self.change))
             else:
                 self.x += abs(self.change)
             if self.y > player.y:
-                self.y += -(self.change)
+                self.y += -(abs(self.change))
             else:
                 self.y += abs(self.change)
+            
+            if random.randint(0,500) == 0:
+                self.change = -(self.change)
+
+            # if self.x > player.x:
+            #     self.x += -(self.change)
+            # else:
+            #     self.x += abs(self.change)
+            # if self.y > player.y:
+            #     self.y += -(self.change)
+            # else:
+            #     self.y += abs(self.change)
+            
+            # if random.randint(0,500) == 0:
+            #     self.change = -(self.change)
+                
                 
             # Borders of screen
             if self.x <= 0:
@@ -356,7 +372,6 @@ class Enemy(Character):
         # return False
 
         if self.rect.colliderect(other.rect):
-            print("Collision detected!")
             other.take_damage()
             # Implement collision response (e.g., move player back)
             
@@ -462,7 +477,7 @@ class Dragon(Enemy):
         self.x = 800
         self.hp = hp
 
-        self.bullet = Bullet('resources/enemies/fire_ball.png', 100, 44,13)
+        self.bullet = Bullet('resources/enemies/fire_ball.png', 100, 88,26)
 
         #The two different attacks for the dragon image
         #self.fireball_img = pygame.image.load('resources\enemies\\fire_ball.png').convert_alpha()
