@@ -231,10 +231,12 @@ class Knight(Character):
 
 
 class Bullet:
-    def __init__(self, img_path, chance=150):
+    def __init__(self, img_path, chance=150, width=32, height=32):
         self.chance = chance
+        self.width = width
+        self.height = height
         self.img = pygame.image.load(img_path).convert_alpha()
-        self.img = pygame.transform.scale(self.img, (32,32))
+        self.img = pygame.transform.scale(self.img, (self.width,self.height))
         self.x = 0
         self.y = 0
         self.x_change = 0
@@ -373,54 +375,6 @@ class Snake(Enemy):
 
         self.bullet = Bullet('resources/enemies/poison.png')
 
-        # self.poison_img = pygame.image.load('resources/enemies/poison.png').convert_alpha()
-        # self.poison_img = pygame.transform.scale(self.poison_img, (32,32))
-        # self.poison_ready = True
-        # self.poison_x = x
-        # self.poison_y = y
-        # # self.poison_change = 2
-        # self.poison_x_change = 0
-        # self.poison_y_change = 0
-        # self.poison_rect = self.poison_img.get_rect(topleft=(self.poison_x, self.poison_y))
-        # self.target_x = None
-        # self.target_y = None
-
-    # def try_shoot(self, player):
-    #     if random.randint(0,150) == 0:
-    #         self.poison_ready = False
-    #         self.poison_x = self.x
-    #         self.poison_y = self.y
-    #         # self.target_x = player.x
-    #         # self.target_y = player.y
-    #         self.poison_x_change = (player.x - self.x) / 75
-    #         self.poison_y_change = (player.y - self.y) / 75
-
-    # def poison_check(self, player):
-    #     if self.poison_rect.colliderect(player.rect):
-    #         player.take_damage()
-    #         self.poison_ready = True
-    
-    # def move_poison(self):
-    #     # if self.poison_x > self.target_x:
-    #     #     self.poison_x += -(self.poison_change)
-    #     # else:
-    #     #     self.poison_x += abs(self.poison_change)
-    #     # if self.poison_y > self.target_y:
-    #     #     self.poison_y += -(self.poison_change)
-    #     # else:
-    #     #     self.poison_y += abs(self.poison_change)
-    #     self.poison_x += self.poison_x_change
-    #     self.poison_y += self.poison_y_change
-            
-    #     # Borders of screen
-    #     if self.poison_x <= 0 or self.poison_x >= (1000-128) or self.poison_y <= 0 or self.poison_y >= (600-128):
-    #         self.ready = True
-
-    #     self.poison_rect.topleft = (self.poison_x, self.poison_y)
-
-    # def display_poison(self, game):
-        # game.screen.blit(self.poison_img, (self.poison_x,self.poison_y))
-
 
 class Wolf(Enemy):
     # I dont know if it works completely rn and I don't understand all of it yet
@@ -508,7 +462,7 @@ class Dragon(Enemy):
         self.x = 800
         self.hp = hp
 
-        self.bullet = Bullet('resources/enemies/fire_ball.png', 100)
+        self.bullet = Bullet('resources/enemies/fire_ball.png', 100, 44,13)
 
         #The two different attacks for the dragon image
         #self.fireball_img = pygame.image.load('resources\enemies\\fire_ball.png').convert_alpha()
