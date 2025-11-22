@@ -397,7 +397,8 @@ class Wolf(Enemy):
         self.img_path = 'resources/enemies/wolf.png'
         super().__init__(x, y, change)
         
-
+        self.slash_x = 0
+        self.slash_y = 0
         # Load slash asset once per wolf; fallback if missing
         try:
             self.slash_img = pygame.image.load('resources/enemies/claw_slash.png').convert_alpha()
@@ -413,7 +414,7 @@ class Wolf(Enemy):
         self.slash_hit_done = False    # ensure one hit per slash
 
         # Track last seen player x so display can orient slash
-        self.last_player_x = None
+        #self.last_player_x = None
 
     def move(self, player):
         # Keep chase behaviour
@@ -427,12 +428,14 @@ class Wolf(Enemy):
         # If currently slashing, handle hit-check and ending the slash
         if self.is_slashing:
             # position slash toward the player
-            if self.last_player_x is not None and self.last_player_x < self.x:
-                slash_x = self.x - 48  # left side
-            else:
-                slash_x = self.x + 48  # right side
-            slash_y = self.y + 8
-            slash_rect = self.slash_img.get_rect(topleft=(slash_x, slash_y))
+            # if self.last_player_x is not None and self.last_player_x < self.x:
+            #     slash_x = self.x - 48  # left side
+            # else:
+            #     slash_x = self.x + 48  # right side
+            # slash_y = self.y + 8
+            self.slash_x = self.x - 48
+            self.slash_y = self.y + 8
+            slash_rect = self.slash_img.get_rect(topleft=(self.slash_x, self.slash_y))
 
             # single hit per slash
             if not self.slash_hit_done and slash_rect.colliderect(player.rect):
@@ -461,12 +464,13 @@ class Wolf(Enemy):
 
         if self.is_slashing:
             # orient slash toward last seen player x
-            if self.last_player_x is not None and self.last_player_x < self.x:
-                slash_x = self.x - 48
-            else:
-                slash_x = self.x + 48
-            slash_y = self.y + 8
-            game.screen.blit(self.slash_img, (slash_x, slash_y))
+            # if self.last_player_x is not None and self.last_player_x < self.x:
+            #     slash_x = self.x - 48
+            # else:
+            #     slash_x = self.x + 48
+            # slash_y = self.y + 8
+
+            game.screen.blit(self.slash_img, (self.slash_x, self.slash_y))
 
 
 class Dragon(Enemy):
@@ -481,8 +485,18 @@ class Dragon(Enemy):
 
         #The two different attacks for the dragon image
         #self.fireball_img = pygame.image.load('resources\enemies\\fire_ball.png').convert_alpha()
-        #self.firecone_img = pygame.image.load('resources\enemies\\fire_cone.png').convert_alpha()
+        self.firecone_img = pygame.image.load('resources\enemies\\fire_cone.png').convert_alpha()
+        
     
+        # cone state (no cooldown, start by random chance)
+        self.is_fire = False
+        self.cone_start = 0
+        self.cone_duration = 300      # ms the cone is visible (tweak)
+        self.cone_hit_done = False    # ensure one hit per slash
+
+        # Track last seen player x so display can orient slash
+        self.last_player_x = None
+
     def move(self, player):
         chance = random.randint(0,100)
         if chance == 100:
@@ -495,6 +509,56 @@ class Dragon(Enemy):
             self.y = 400
         
         self.rect.topleft = (self.x, self.y)
+
+        # Remember where the player was (used by display for orientation)
+        self.last_player_x = player.x
+
+        now = pygame.time.get_ticks()
+
+        # If currently fire cones, handle hit-check and ending the cone
+        if self.is_fire:
+            # position cone toward the player
+            if self.last_player_x is not None and self.last_player_x < self.x:
+                cone_x = self.x - 48  # left side
+            else:
+                cone_x = self.x + 48  # right side
+            cone_y = self.y + 8
+            cone_rect = self.firecone_img.get_rect(topleft=(cone_x, cone_y))
+
+            # single hit per slash
+            if not self.cone_hit_done and cone_rect.colliderect(player.rect):
+                player.take_damage()
+                self.cone_hit_done = True
+
+            # end slash after duration
+            if now - self.cone_start >= self.cone_duration:
+                self.is_fire = False
+                self.cone_hit_done = False
+
+            return
+
+        # If not slashing, maybe start one randomly (frame-dependent) make sure there is a import random somewhere
+        # probability per frame to start a slash (tune this)
+        start_prob = 0.01
+        if random.random() < start_prob:
+            self.is_fire = True
+            self.cone_start = now
+            self.cone_hit_done = False
+            # optional: play a sound here (mixer.Sound(...).play())
+
+    def display(self, game):
+        # Draw the dragon and the cone (if active)
+        game.screen.blit(self.img, (self.x, self.y))
+
+        if self.is_fire:
+            # orient cone toward last seen player x
+            if self.last_player_x is not None and self.last_player_x < self.x:
+                cone_x = self.x - 275
+            else:
+                cone_x = self.x + 48
+            cone_y = self.y + 8
+            game.screen.blit(self.firecone_img, (cone_x, cone_y))
+
 
     def is_hit(self, sword_rect):
         """
