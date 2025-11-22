@@ -7,6 +7,8 @@ class WholeGame:
     def __init__(self, screen, mode=''):
         self.screen = screen
         self.mode = mode
+        self.won_hard = False
+        self.best_time = [10000, 0, 0]  # total seconds, minutes, seconds
 
 
 class Text:
@@ -87,10 +89,88 @@ class Room:
     def display_back(self, game):
         game.screen.blit(self.background, (0,0))
 
-# ?????????????
 class Attack(ABC):
-    pass
+    def __init__(self, img_path, width,height, chance=100):
+        self.chance = chance
+        self.img = pygame.image.load(img_path).convert_alpha()
+        self.img = pygame.transform.scale(self.img, (width,height))
+        self.x = 0
+        self.y = 0
 
+        self.active = False
+        self.rect = self.img.get_rect(topleft=(self.x, self.y))
+
+    def display(self, game):
+        if self.active:
+            game.screen.blit(self.img, (self.x, self.y))
+
+
+class Bullet(Attack):
+    def __init__(self, img_path, width,height, chance):
+        super().__init__(img_path, width,height, chance)
+        self.x_change = 0
+        self.y_change = 0
+
+    def try_shoot(self, shooter, target):
+        if random.randint(0,self.chance) == 0:
+            self.active = True
+            self.x = shooter.x
+            self.y = shooter.y
+            self.x_change = (target.x - shooter.x) / 75
+            self.y_change = (target.y - shooter.y) / 75
+            mixer.Sound('resources/sounds/laser.wav').play()
+
+    def hit_check(self, target):
+        if self.rect.colliderect(target.rect):
+            target.take_damage()
+            self.active = False
+    
+    def move(self):
+        self.x += self.x_change
+        self.y += self.y_change
+            
+        # Borders of screen
+        if self.x <= 0 or self.x >= (1000-128) or self.y <= 0 or self.y >= (600-128):
+            self.active = False
+
+        self.rect.topleft = (self.x, self.y)
+
+class Melee(Attack):
+    def __init__(self, img_path, x_distance, y_distance, duration=300, width=275, height=85, chance=100):
+        super().__init__(img_path, width,height, chance)
+        self.x_distance = x_distance
+        self.y_distance = y_distance
+        self.start = 0
+        self.duration = duration      # ms the slash is visible (tweak)
+        self.hit_done = False    # ensure one hit per slash
+    
+    def move(self, attacker, victim):
+        now = pygame.time.get_ticks()
+
+        if not self.active:
+            # If not slashing, maybe start one randomly (frame-dependent) make sure there is a import random somewhere
+            # probability per frame to start a slash (tune this)
+            if random.randint(0,self.chance) == 0:
+                self.active = True
+                self.start = now
+                self.hit_done = False
+                mixer.Sound('resources/sounds/laser.wav').play()
+
+        # If currently slashing, handle hit-check and ending the slash
+        if self.active:
+            self.x = attacker.x - self.x_distance
+            self.y = attacker.y + self.y_distance
+            self.rect.topleft = (self.x, self.y)
+
+            # single hit per slash
+            if not self.hit_done and self.rect.colliderect(victim.rect):
+                victim.take_damage()
+                self.hit_done = True
+
+            # end slash after duration
+            if now - self.start >= self.duration:
+                self.active = False
+                self.hit_done = False
 
 
 class Character(ABC):
@@ -129,14 +209,12 @@ class Knight(Character):
         self.sword_cooldown_start = 0
 
         # preload sword image (adjust scale as needed)
-        try:
-            self.sword_img = pygame.image.load('resources/player/bold_swing.png').convert_alpha()
-        except Exception:
-            # fallback visible rect if image missing
-            self.sword_img = pygame.Surface((48,16), pygame.SRCALPHA)
-            pygame.draw.rect(self.sword_img, (220,220,220,200), self.sword_img.get_rect())
-        self.sword_img = pygame.transform.scale(self.sword_img, (64,32))
-        self.sword_rect = self.sword_img.get_rect()
+        self.sword_img = pygame.image.load('resources/player/bold_swing.png').convert_alpha()
+        self.sword_img = pygame.transform.scale(self.sword_img, (64,62)) # start: 128,124 | first: 64,32
+        self.sword_rect = self.sword_img.get_rect(topleft=(self.x, self.y))
+
+        self.ready_img = pygame.image.load('resources/player/ready.png').convert_alpha()
+        self.ready_img = pygame.transform.scale(self.ready_img, (32,32))
 
     def move(self):
         self.x += self.x_change
@@ -182,6 +260,11 @@ class Knight(Character):
             # draw player
             super().display(game)
 
+        if self.sword_ready == True:
+            # game.screen.blit(self.ready_img, (10,10))
+            game.screen.blit(self.ready_img, (self.x + 65, self.y +75))
+            # game.screen.blit(self.sword_img, (self.x + 70, self.y + (self.img.get_height() // 2) - (self.sword_img.get_height() // 2)))
+
         # draw sword when active (position it relative to player)
         if self.sword_active:
             # example: position to the right and middle of the knight
@@ -209,17 +292,6 @@ class Knight(Character):
         game.screen.blit(heart_img, (self.x +22,self.y +75))
 
     def attack(self):
-        #I need to add an attack for the player(knight) to use the bold_swing.png 
-        # to attack the urchin, wolves. snake, and dragon, These should be methods 
-        # that can do one slash on the animal and they are defeated(dissapear)
-        # space bar to show the image 
-
-        # if bullet.state == "ready":
-        #     bullet.x = player.x +16
-        #     bullet.y = player.y +10
-        #     bullet.state = "fire"
-        #     mixer.Sound('resources/laser.wav').play()
-
         if self.sword_ready and not self.sword_active:
             self.sword_active = True
             self.sword_start = pygame.time.get_ticks()
@@ -227,47 +299,6 @@ class Knight(Character):
             mixer.Sound('resources/sounds/laser.wav').play()
             # position will be updated on next display call / frame
 
-
-
-class Bullet:
-    def __init__(self, img_path, chance=150, width=32, height=32):
-        self.chance = chance
-        self.width = width
-        self.height = height
-        self.img = pygame.image.load(img_path).convert_alpha()
-        self.img = pygame.transform.scale(self.img, (self.width,self.height))
-        self.x = 0
-        self.y = 0
-        self.x_change = 0
-        self.y_change = 0
-        self.active = False
-        self.rect = self.img.get_rect(topleft=(self.x, self.y))
-
-    def try_shoot(self, shooter, target):
-        if random.randint(0,self.chance) == 0:
-            self.active = True
-            self.x = shooter.x
-            self.y = shooter.y
-            self.x_change = (target.x - shooter.x) / 75
-            self.y_change = (target.y - shooter.y) / 75
-
-    def hit_check(self, target):
-        if self.rect.colliderect(target.rect):
-            target.take_damage()
-            self.active = False
-    
-    def move(self):
-        self.x += self.x_change
-        self.y += self.y_change
-            
-        # Borders of screen
-        if self.x <= 0 or self.x >= (1000-128) or self.y <= 0 or self.y >= (600-128):
-            self.active = False
-
-        self.rect.topleft = (self.x, self.y)
-
-    def display(self, game):
-        game.screen.blit(self.img, (self.x,self.y))
 
 
 class Enemy(Character):
@@ -323,9 +354,8 @@ class Enemy(Character):
                 self.y += -(abs(self.change))
             else:
                 self.y += abs(self.change)
-            
-            if random.randint(0,500) == 0:
-                self.change = -(self.change)
+            # if random.randint(0,500) == 0:
+            #     self.change = -(self.change)
 
             # if self.x > player.x:
             #     self.x += -(self.change)
@@ -388,7 +418,21 @@ class Snake(Enemy):
         self.img_path = 'resources/enemies/snake.png'
         super().__init__(x,y, change)
 
-        self.bullet = Bullet('resources/enemies/poison.png')
+        self.poison = Bullet('resources/enemies/poison.png', 32,32, 150)
+    
+    def move(self, player):
+        super().move(player)
+
+        if self.poison.active == False:
+            self.poison.try_shoot(self, player)
+        else:
+            self.poison.move()
+            self.poison.hit_check(player)
+    
+    def display(self, game):
+        super().display(game)
+            
+        self.poison.display(game)
 
 
 class Wolf(Enemy):
@@ -397,109 +441,37 @@ class Wolf(Enemy):
         self.img_path = 'resources/enemies/wolf.png'
         super().__init__(x, y, change)
         
-        self.slash_x = 0
-        self.slash_y = 0
-        # Load slash asset once per wolf; fallback if missing
-        try:
-            self.slash_img = pygame.image.load('resources/enemies/claw_slash.png').convert_alpha()
-            self.slash_img = pygame.transform.flip(self.slash_img, True, False)
-        except Exception:
-            self.slash_img = self.img
-        self.slash_img = pygame.transform.scale(self.slash_img, (64, 64))  # tweak size if needed
-
-        # Slash state (no cooldown, start by random chance)
-        self.is_slashing = False
-        self.slash_start = 0
-        self.slash_duration = 300      # ms the slash is visible (tweak)
-        self.slash_hit_done = False    # ensure one hit per slash
-
-        # Track last seen player x so display can orient slash
-        #self.last_player_x = None
+        self.slash = Melee('resources/enemies/claw_slash.png', 48, 8, 64,64)
+        
 
     def move(self, player):
         # Keep chase behaviour
         super().move(player)
 
-        # Remember where the player was (used by display for orientation)
-        self.last_player_x = player.x
-
-        now = pygame.time.get_ticks()
-
-        # If currently slashing, handle hit-check and ending the slash
-        if self.is_slashing:
-            # position slash toward the player
-            # if self.last_player_x is not None and self.last_player_x < self.x:
-            #     slash_x = self.x - 48  # left side
-            # else:
-            #     slash_x = self.x + 48  # right side
-            # slash_y = self.y + 8
-            self.slash_x = self.x - 48
-            self.slash_y = self.y + 8
-            slash_rect = self.slash_img.get_rect(topleft=(self.slash_x, self.slash_y))
-
-            # single hit per slash
-            if not self.slash_hit_done and slash_rect.colliderect(player.rect):
-                player.take_damage()
-                self.slash_hit_done = True
-
-            # end slash after duration
-            if now - self.slash_start >= self.slash_duration:
-                self.is_slashing = False
-                self.slash_hit_done = False
-
-            return
-
-        # If not slashing, maybe start one randomly (frame-dependent) make sure there is a import random somewhere
-        # probability per frame to start a slash (tune this)
-        start_prob = 0.01
-        if random.random() < start_prob:
-            self.is_slashing = True
-            self.slash_start = now
-            self.slash_hit_done = False
-            # optional: play a sound here (mixer.Sound(...).play())
+        self.slash.move(self,player)
 
     def display(self, game):
         # Draw the wolf and the slash (if active)
         game.screen.blit(self.img, (self.x, self.y))
 
-        if self.is_slashing:
-            # orient slash toward last seen player x
-            # if self.last_player_x is not None and self.last_player_x < self.x:
-            #     slash_x = self.x - 48
-            # else:
-            #     slash_x = self.x + 48
-            # slash_y = self.y + 8
-
-            game.screen.blit(self.slash_img, (self.slash_x, self.slash_y))
+        self.slash.display(game)
 
 
 class Dragon(Enemy):
-    def __init__(self, x,y, hp, change=0.2):
+    def __init__(self, x,y, hp, change=0.2, ball_chance=100, cone_chance=300):
         self.img_path = 'resources/enemies/blue_dragon.png'
         super().__init__(x,y, change)
         self.img = pygame.transform.flip(self.img, True, False)
+        self.img = pygame.transform.scale(self.img, (122*1.5,128*1.5)) # start: 122,128
         self.x = 800
         self.hp = hp
+        self.rect = self.img.get_rect(topleft=(self.x, self.y))
 
-        self.bullet = Bullet('resources/enemies/fire_ball.png', 100, 88,26)
-
-        #The two different attacks for the dragon image
-        #self.fireball_img = pygame.image.load('resources\enemies\\fire_ball.png').convert_alpha()
-        self.firecone_img = pygame.image.load('resources\enemies\\fire_cone.png').convert_alpha()
-        
-    
-        # cone state (no cooldown, start by random chance)
-        self.is_fire = False
-        self.cone_start = 0
-        self.cone_duration = 300      # ms the cone is visible (tweak)
-        self.cone_hit_done = False    # ensure one hit per slash
-
-        # Track last seen player x so display can orient slash
-        self.last_player_x = None
+        self.fire_ball = Bullet('resources/enemies/fire_ball.png', 316/4,103/4, chance=100) # crop: 316,103 | before:88,26
+        self.fire_cone = Melee('resources/enemies/fire_cone.png', 270, 40, chance=300)
 
     def move(self, player):
-        chance = random.randint(0,100)
-        if chance == 100:
+        if random.randint(0,100) == 0:
             self.change = -(self.change)
         self.y += self.change
 
@@ -510,54 +482,25 @@ class Dragon(Enemy):
         
         self.rect.topleft = (self.x, self.y)
 
-        # Remember where the player was (used by display for orientation)
-        self.last_player_x = player.x
+        # Fireball attack
+        if self.fire_ball.active == False:
+            self.fire_ball.try_shoot(self, player)
+        else:
+            self.fire_ball.move()
+            self.fire_ball.hit_check(player)
 
-        now = pygame.time.get_ticks()
-
-        # If currently fire cones, handle hit-check and ending the cone
-        if self.is_fire:
-            # position cone toward the player
-            if self.last_player_x is not None and self.last_player_x < self.x:
-                cone_x = self.x - 48  # left side
-            else:
-                cone_x = self.x + 48  # right side
-            cone_y = self.y + 8
-            cone_rect = self.firecone_img.get_rect(topleft=(cone_x, cone_y))
-
-            # single hit per slash
-            if not self.cone_hit_done and cone_rect.colliderect(player.rect):
-                player.take_damage()
-                self.cone_hit_done = True
-
-            # end slash after duration
-            if now - self.cone_start >= self.cone_duration:
-                self.is_fire = False
-                self.cone_hit_done = False
-
-            return
-
-        # If not slashing, maybe start one randomly (frame-dependent) make sure there is a import random somewhere
-        # probability per frame to start a slash (tune this)
-        start_prob = 0.01
-        if random.random() < start_prob:
-            self.is_fire = True
-            self.cone_start = now
-            self.cone_hit_done = False
-            # optional: play a sound here (mixer.Sound(...).play())
+        # Fire cone attack
+        self.fire_cone.move(self, player)
 
     def display(self, game):
         # Draw the dragon and the cone (if active)
         game.screen.blit(self.img, (self.x, self.y))
 
-        if self.is_fire:
-            # orient cone toward last seen player x
-            if self.last_player_x is not None and self.last_player_x < self.x:
-                cone_x = self.x - 275
-            else:
-                cone_x = self.x + 48
-            cone_y = self.y + 8
-            game.screen.blit(self.firecone_img, (cone_x, cone_y))
+        if game.mode != 'easy':
+            self.display_health(game)
+
+        self.fire_ball.display(game)
+        self.fire_cone.display(game)
 
 
     def is_hit(self, sword_rect):
@@ -578,12 +521,6 @@ class Dragon(Enemy):
         return False
     
     def display_health(self, game):
-        # # Display dragon health as hearts
-        # heart_img = pygame.image.load('resources/player/hearts/heart_5.png')
-        # heart_img = pygame.transform.scale(heart_img, (30,30))
-        # for i in range(self.hp):
-        #     game.screen.blit(heart_img, (20 + i*35, 20))
-
         dragon_health = Text(size=30, txt=f"Dragon HP: {self.hp}", coord=(750,20), color=(255,0,0))
         dragon_health.display(game)
 

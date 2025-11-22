@@ -3,7 +3,7 @@ import pygame
 from pygame import mixer
 from classes import Text
 
-def over(game, next_btn, player):
+def over(game, next_btn, time_txt, player):
     player.x = 455
     player.y = 375
 
@@ -16,13 +16,17 @@ def over(game, next_btn, player):
         lost_text = Text(txt="GAME OVER", color=(0,0,0), coord=(300,100))
         lost_text.display(game)
 
+        time_txt.display(game)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return  # exit play and return to caller
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                elif event.key == pygame.K_SPACE:
+                # elif event.key == pygame.K_SPACE:
+                #     end = True
+                elif event.key == pygame.K_RETURN:
                     end = True
 
         player.heart_status(game)

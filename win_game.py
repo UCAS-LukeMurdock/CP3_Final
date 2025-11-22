@@ -3,7 +3,7 @@ import pygame
 from pygame import mixer
 from classes import Text
 
-def won(game, next_btn):
+def won(game, next_btn, time_txt):
 
     mixer.Sound('resources/sounds/explosion.wav').play()
     mixer.Sound('resources/sounds/explosion.wav').play()
@@ -15,13 +15,17 @@ def won(game, next_btn):
         won_text.display(game)
         dif_text.display(game)
 
+        time_txt.display(game)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return  # exit play and return to caller
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                if event.key == pygame.K_SPACE:
+                # if event.key == pygame.K_SPACE:
+                #     end = True
+                elif event.key == pygame.K_RETURN:
                     end = True
 
         if next_btn.draw(game, True):

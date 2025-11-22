@@ -1,13 +1,24 @@
 # File that plays one room
 import pygame
 from pygame import mixer
+from classes import Text
 
-def play_room(game, player, room, next_btn, clock):
+def play_room(game, player, room, next_btn, clock, start_time, time_txt):
     while player.hp > 0:
         next = False
         # draw background and room title
         room.display_back(game)
         room.name.display(game)
+
+        time = pygame.time.get_ticks()//1000 - start_time
+        minutes = time // 60
+        seconds = time % 60
+        time_txt.txt = f"{minutes:02}:{seconds:02}"
+        if room.name == "Cave":
+            time_txt.size = 30
+            time_txt.coord = (460,545)
+        time_txt.display(game)
+
 
         for event in pygame.event.get():
 
@@ -40,10 +51,13 @@ def play_room(game, player, room, next_btn, clock):
 
                 # attack on space
                 elif event.key == pygame.K_SPACE:
+                    # if not room.oppons:
+                    #     next = True
+                    # else:
+                        player.attack()
+                elif event.key == pygame.K_RETURN:
                     if not room.oppons:
                         next = True
-                    else:
-                        player.attack()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -59,28 +73,19 @@ def play_room(game, player, room, next_btn, clock):
                 #     player.invincible = False
                 
         
-            # Changes
+        # Changes
 
         for oppon in room.oppons:
             oppon.move(player)
             oppon.collide_check(player)
-            if room.name == "Jungle" or room.name == "Cave":
-                if oppon.bullet.active == False:
-                    oppon.bullet.try_shoot(oppon, player)
-                else:
-                    oppon.bullet.move()
-                    oppon.bullet.hit_check(player)
-            
+                
         player.move()
             
 
             # Set Items
         for oppon in room.oppons:
             oppon.display(game)
-            if room.name == "Cave" and game.mode != 'easy':
-                oppon.display_health(game)
-            if (room.name == "Jungle" or room.name == "Cave") and oppon.bullet.active:
-                oppon.bullet.display(game)
+
         player.display(game)
         player.heart_status(game)
 

@@ -22,6 +22,9 @@ def main():
     background = pygame.image.load('resources/backgrounds/sword.png')
     background = pygame.transform.scale(background, (1000,600))
 
+    rich = pygame.image.load('resources/backgrounds/gold.png')
+    rich = pygame.transform.scale(rich, (1000,600))
+
     # Background music
     mixer.music.load('resources/sounds/background.wav')
     mixer.music.play(-1)
@@ -29,6 +32,8 @@ def main():
     title = Text(txt=title, coord=(225,5))
     help_txt = " - Use arrow keys for movement\n\n - Press space for attack\n\n - Press {key} to use special abilities"
     help = Text(size=20, txt=help_txt, coord=(70,300))
+
+    time_txt = Text(size=25, txt="", coord=(410,545)) # past: 800,25
 
     # help_button = Button(175,150, 'resources/buttons/help.png', .8)
     help_button = Button(175,150, 'resources/buttons/info.png', .2)
@@ -41,8 +46,12 @@ def main():
     running = True
     while running:
         game.mode = ''
-        game.screen.blit(background, (0,0))
+        if not game.won_hard:
+            game.screen.blit(background, (0,0))
+        else:
+            game.screen.blit(rich, (0,0))
         title.display(game)
+        time_txt.display(game)
 
         # loop events
         for event in pygame.event.get():
@@ -75,8 +84,11 @@ def main():
             game.mode = 'hard'
         
         if game.mode != '':
-            play(game)
-        
+            if play(game):
+                if game.mode == 'hard':
+                    game.won_hard = True
+                time_txt.txt = f"Best Time: {game.best_time[1]}:{game.best_time[2]:02}"
+
 
         pygame.display.flip()
 
