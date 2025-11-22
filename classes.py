@@ -414,11 +414,11 @@ class Urchin(Enemy):
 
 
 class Snake(Enemy):
-    def __init__(self, x,y, change=0.15):
+    def __init__(self, x,y, change=0.15, poison_chance=150):
         self.img_path = 'resources/enemies/snake.png'
         super().__init__(x,y, change)
 
-        self.poison = Bullet('resources/enemies/poison.png', 32,32, 150)
+        self.poison = Bullet('resources/enemies/poison.png', 32,32, poison_chance)
     
     def move(self, player):
         super().move(player)
