@@ -89,6 +89,8 @@ class Room:
     def display_back(self, game):
         game.screen.blit(self.background, (0,0))
 
+
+
 class Attack(ABC):
     def __init__(self, img_path, width,height, chance=100):
         self.chance = chance
@@ -103,6 +105,10 @@ class Attack(ABC):
     def display(self, game):
         if self.active:
             game.screen.blit(self.img, (self.x, self.y))
+    
+    @abstractmethod
+    def move(self):
+        pass
 
 
 class Bullet(Attack):
