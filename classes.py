@@ -221,6 +221,7 @@ class Knight(Character):
 
         self.ready_img = pygame.image.load('resources/player/ready.png').convert_alpha()
         self.ready_img = pygame.transform.scale(self.ready_img, (32,32))
+        self.ready_img.fill((250, 250, 250), special_flags=pygame.BLEND_RGB_ADD)
 
     def move(self):
         self.x += self.x_change
