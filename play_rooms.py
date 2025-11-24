@@ -4,6 +4,7 @@ from pygame import mixer
 from classes import Text
 
 def play_room(game, player, room, next_btn, clock, start_time, time_txt):
+    healed = False
     while player.hp > 0:
         next = False
         # draw background and room title
@@ -33,7 +34,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
                 elif event.key == pygame.K_RETURN:
                     if not room.oppons:
                         next = True
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_q: # GET RID OF IN FUTURE - Skip button
                     return True
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -144,6 +145,9 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
 
         # if room cleared, wait for next button press to continue
         if not room.oppons:
+            if room.name == "Jungle" and healed == False:
+                if player.healing(game):
+                    healed = True
             if room.name == "Cave" or next_btn.draw(game, True) or player.x >= 900:
                 next = True
         if next:
