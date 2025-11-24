@@ -40,7 +40,7 @@ def play(game):
                 room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), opon_speeds))
         elif room.name == "Jungle":
             for i in range(0, 3 + dif):
-                room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), opon_speeds, poison_chance=200-(50*dif)))
+                room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), opon_speeds, poison_chance=250-(50*dif)))
         elif room.name == "Mountain":
             for i in range(0, 4 + dif):
                 room.oppons.append(Wolf(r.randint(550, 850), r.randint(10, 450), opon_speeds))

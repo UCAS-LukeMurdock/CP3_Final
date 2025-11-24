@@ -306,6 +306,21 @@ class Knight(Character):
             mixer.Sound('resources/sounds/laser.wav').play()
             # position will be updated on next display call / frame
 
+    def healing(self, game):
+        heart_item_img = pygame.image.load("resources/player/hearts/heart_up.png")
+        heart_item_img = pygame.transform.scale(heart_item_img, (90,90))
+        heart_rect = heart_item_img.get_rect(topleft=(455,255))
+        game.screen.blit(heart_item_img, heart_rect.topleft)
+        
+
+        if heart_rect.colliderect(self.rect):
+            if self.hp < 5:
+                self.hp += 1
+                # mixer.Sound('resources/sounds/powerup.wav').play()
+            return True
+        return False
+
+
 
 
 class Enemy(Character):
