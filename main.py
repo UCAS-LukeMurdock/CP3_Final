@@ -30,10 +30,8 @@ def main():
     mixer.music.play(-1)
 
     title = Text(txt=title, coord=(225,5))
-    help_txt = " - Use arrow keys for movement\n\n - Press space for attack\n\n - Press {key} to use special abilities"
+    help_txt = " - Your goal is to slay the dragon\n     and steal its treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack\n - Press {key} to use special abilities"
     help = Text(size=20, txt=help_txt, coord=(70,300))
-
-    # time_txt = Text(size=25, txt="", coord=(410,545)) # past: 800,25
 
     # help_button = Button(175,150, 'resources/buttons/help.png', .8)
     help_button = Button(175,150, 'resources/buttons/info.png', .2)
@@ -76,7 +74,7 @@ def main():
         if help_button.draw(game):
             need_help = not need_help
         if need_help:
-            help.display(game)
+            help.display(game, True)
         
         if easy_button.draw(game, True):
             game.mode = 'easy'
