@@ -23,12 +23,13 @@ class WholeGame:
 
 
 class Text:
-    def __init__(self, style='freesansbold.ttf', size=60, txt='text', color=(250,250,250), coord=(0,0)):
+    def __init__(self, style='freesansbold.ttf', size=60, txt='text', color=(250,250,250), coord=(0,0), underline=False):
         self.style = style
         self.size = size
         self.txt = txt
         self.color = color
         self.coord = coord
+        self.underline = underline
 
     def display(self, game, multiline=False):
         if multiline:
@@ -39,7 +40,9 @@ class Text:
                 txt_display = font.render(line, True, self.color)
                 game.screen.blit(txt_display, (self.coord[0], self.coord[1] + i * line_height))
         else:
-            txt_display = pygame.font.Font(self.style, self.size).render(self.txt, True, self.color)
+            font = pygame.font.Font(self.style, self.size)
+            font.set_underline(self.underline)
+            txt_display = font.render(self.txt, True, self.color)
             game.screen.blit(txt_display, self.coord)
 
     def __eq__(self, string):
