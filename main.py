@@ -49,7 +49,7 @@ def main():
         else:
             game.screen.blit(rich, (0,0))
         title.display(game)
-        Text(size=25, txt="Best Times", coord=(430,500)).display(game)
+        Text(size=25, txt="Best Times", coord=(430,500), underline=True).display(game)
         for mode in ['easy', 'normal', 'hard']:
             game.best_times[mode][3].display(game)
 
