@@ -30,9 +30,17 @@ class Text:
         self.color = color
         self.coord = coord
 
-    def display(self, game):
-        txt_display = pygame.font.Font(self.style, self.size).render(self.txt, True, self.color)
-        game.screen.blit(txt_display, self.coord)
+    def display(self, game, multiline=False):
+        if multiline:
+            lines = self.txt.split('\n')
+            font = pygame.font.Font(self.style, self.size)
+            line_height = font.get_linesize()
+            for i, line in enumerate(lines):
+                txt_display = font.render(line, True, self.color)
+                game.screen.blit(txt_display, (self.coord[0], self.coord[1] + i * line_height))
+        else:
+            txt_display = pygame.font.Font(self.style, self.size).render(self.txt, True, self.color)
+            game.screen.blit(txt_display, self.coord)
 
     def __eq__(self, string):
         return self.txt == string
