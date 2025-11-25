@@ -58,15 +58,12 @@ def play(game):
         
         if player.hp <= 0:
             next_btn.rect.topleft = (500-128/2, 300-128/2)
-            over(game, next_btn, time_txt, player)
+            over(game, room, next_btn, time_txt, player)
             return
     
                 
     next_btn.rect.topleft = (500-128/2, 300-128/2)
     won(game, next_btn, time_txt)
 
-    if game.best_time[0] > time:
-        game.best_time = [time,
-                          time // 60,
-                          time % 60]
+    game.update_best_time(time)
     return True

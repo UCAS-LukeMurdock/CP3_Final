@@ -33,7 +33,7 @@ def main():
     help_txt = " - Use arrow keys for movement\n\n - Press space for attack\n\n - Press {key} to use special abilities"
     help = Text(size=20, txt=help_txt, coord=(70,300))
 
-    time_txt = Text(size=25, txt="", coord=(410,545)) # past: 800,25
+    # time_txt = Text(size=25, txt="", coord=(410,545)) # past: 800,25
 
     # help_button = Button(175,150, 'resources/buttons/help.png', .8)
     help_button = Button(175,150, 'resources/buttons/info.png', .2)
@@ -51,7 +51,9 @@ def main():
         else:
             game.screen.blit(rich, (0,0))
         title.display(game)
-        time_txt.display(game)
+        Text(size=25, txt="Best Times", coord=(430,500)).display(game)
+        for mode in ['easy', 'normal', 'hard']:
+            game.best_times[mode][3].display(game)
 
         # loop events
         for event in pygame.event.get():
@@ -87,7 +89,7 @@ def main():
             if play(game):
                 if game.mode == 'hard':
                     game.won_hard = True
-                time_txt.txt = f"Best Time: {game.best_time[1]}:{game.best_time[2]:02}"
+                game.best_times[game.mode][3].txt = f"{game.mode.title()}: {game.best_times[game.mode][1]}:{game.best_times[game.mode][2]:02}"
 
 
         pygame.display.flip()

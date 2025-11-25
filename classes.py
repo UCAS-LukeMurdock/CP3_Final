@@ -8,7 +8,18 @@ class WholeGame:
         self.screen = screen
         self.mode = mode
         self.won_hard = False
-        self.best_time = [10000, 0, 0]  # total seconds, minutes, seconds
+        self.best_times = {
+                # total seconds, minutes, seconds
+            'easy': [10000, 0, 0, Text(size=25, txt="", coord=(260,545))], 
+            'normal': [10000, 0, 0, Text(size=25, txt="", coord=(422,545))],
+            'hard': [10000, 0, 0, Text(size=25, txt="", coord=(610,545))]
+            }
+
+    def update_best_time(self, total_seconds):
+        if total_seconds < self.best_times[self.mode][0]:
+            self.best_times[self.mode][0] = total_seconds
+            self.best_times[self.mode][1] = total_seconds // 60
+            self.best_times[self.mode][2] = total_seconds % 60
 
 
 class Text:
@@ -308,7 +319,7 @@ class Knight(Character):
 
     def healing(self, game):
         heart_item_img = pygame.image.load("resources/player/hearts/heart_up.png")
-        heart_item_img = pygame.transform.scale(heart_item_img, (90,90))
+        heart_item_img = pygame.transform.scale(heart_item_img, (347/4,318/4)) # start: 347,318  prior: 90,90
         heart_rect = heart_item_img.get_rect(topleft=(455,255))
         game.screen.blit(heart_item_img, heart_rect.topleft)
         

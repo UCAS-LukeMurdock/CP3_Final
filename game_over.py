@@ -3,9 +3,12 @@ import pygame
 from pygame import mixer
 from classes import Text
 
-def over(game, next_btn, time_txt, player):
+def over(game, room, next_btn, time_txt, player):
     player.x = 455
     player.y = 375
+
+    fire = pygame.image.load('resources/backgrounds/fire.png')
+    fire = pygame.transform.scale(fire, (1000,600))
 
     for i in range(0,4):
         mixer.Sound('resources/sounds/explosion.wav').play()
@@ -14,6 +17,9 @@ def over(game, next_btn, time_txt, player):
         end = False
         game.screen.fill((250,0,0))
         lost_text = Text(txt="GAME OVER", color=(0,0,0), coord=(300,100))
+        if room.name == "Cave":
+            game.screen.blit(fire, (0,0))
+            lost_text.color = (255,0,0)
         lost_text.display(game)
 
         time_txt.display(game)
