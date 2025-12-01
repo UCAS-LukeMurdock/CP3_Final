@@ -38,7 +38,7 @@ class Text:
             line_height = font.get_linesize()
             for i, line in enumerate(lines):
                 txt_display = font.render(line, True, self.color)
-                game.screen.blit(txt_display, (self.coord[0], self.coord[1] + i * line_height))
+                game.screen.blit(txt_display, (self.coord[0], self.coord[1] + i*(line_height +5)))
         else:
             font = pygame.font.Font(self.style, self.size)
             font.set_underline(self.underline)
@@ -164,13 +164,14 @@ class Bullet(Attack):
         self.rect.topleft = (self.x, self.y)
 
 class Melee(Attack):
-    def __init__(self, img_path, x_distance, y_distance, duration=300, width=275, height=85, chance=100):
+    def __init__(self, img_path, x_distance, y_distance, duration=300, width=275,height=85, chance=100, telegraph_time=100):
         super().__init__(img_path, width,height, chance)
         self.x_distance = x_distance
         self.y_distance = y_distance
         self.start = 0
         self.duration = duration      # ms the slash is visible (tweak)
         self.hit_done = False    # ensure one hit per slash
+        self.telegraph_time = telegraph_time
     
     def move(self, attacker, victim):
         now = pygame.time.get_ticks()
@@ -189,7 +190,8 @@ class Melee(Attack):
             self.x = attacker.x - self.x_distance
             self.y = attacker.y + self.y_distance
             self.rect.topleft = (self.x, self.y)
-
+            if now - self.start  < self.telegraph_time:
+                return
             # single hit per slash
             if not self.hit_done and self.rect.colliderect(victim.rect):
                 victim.take_damage()
@@ -199,6 +201,23 @@ class Melee(Attack):
             if now - self.start >= self.duration:
                 self.active = False
                 self.hit_done = False
+    def display(self, game):
+        if self.active:
+            if pygame.time.get_ticks() - self.start  < self.telegraph_time:
+                crop_rect = pygame.Rect(self.x+175,self.y, 100, 85) # Crops a 100x100 area starting at (50, 50)
+
+                # Create a new surface for the cropped image
+                cropped_image = pygame.Surface(crop_rect.size, pygame.SRCALPHA) # SRCALPHA for transparency
+
+                # Blit the cropped region of the original image onto the new surface
+                cropped_image.blit(self.img, (0, 0), crop_rect)
+
+                # Now 'cropped_image' holds the cropped portion
+                # You can then blit 'cropped_image' to your screen or use it as needed
+                game.screen.blit(cropped_image, (200, 150))
+
+            else:
+                game.screen.blit(self.img, (self.x, self.y))
 
 
 class Character(ABC):
@@ -567,4 +586,3 @@ class Dragon(Enemy):
     def display_health(self, game):
         dragon_health = Text(size=30, txt=f"Dragon HP: {self.hp}", coord=(750,20), color=(255,0,0))
         dragon_health.display(game)
-
