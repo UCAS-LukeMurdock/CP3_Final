@@ -5,8 +5,10 @@ from classes import Text
 
 def won(game, next_btn, time_txt):
 
+    pygame.mixer.music.stop()
     mixer.Sound('resources/sounds/explosion.wav').play()
     mixer.Sound('resources/sounds/explosion.wav').play()
+    
     while True:
         end = False
         game.screen.fill((0,250,0))

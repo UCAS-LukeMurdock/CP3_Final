@@ -29,6 +29,7 @@ def main():
     mixer.music.load('resources/sounds/background.wav')
     mixer.music.play(-1)
 
+    # text
     title = Text(txt=title, coord=(225,5))
     help_txt = " - Your goal is to slay the dragon\n     and steal its treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack\n - Press {key} to use special abilities"
     help = Text(size=20, txt=help_txt, coord=(70,300))
@@ -88,6 +89,8 @@ def main():
                 if game.mode == 'hard':
                     game.won_hard = True
                 game.best_times[game.mode][3].txt = f"{game.mode.title()}: {game.best_times[game.mode][1]}:{game.best_times[game.mode][2]:02}"
+            mixer.music.load('resources/sounds/background.wav')
+            mixer.music.play(-1)
 
 
         pygame.display.flip()
