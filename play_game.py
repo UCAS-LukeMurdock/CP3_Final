@@ -1,6 +1,8 @@
 # File to play through the rooms
 import pygame
+from pygame import mixer
 import random as r
+
 from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
 from play_rooms import play_room
 from game_over import over
@@ -36,9 +38,13 @@ def play(game):
 
         # spawn opponents based on room name (room.name is a Text object)
         if room.name == "Ocean":
+            mixer.music.load('resources/sounds/ocean.wav')
+            mixer.music.play(-1)
             for i in range(0, 2 + dif):
                 room.oppons.append(Urchin(r.randint(550, 850), r.randint(10, 450), opon_speeds))
         elif room.name == "Jungle":
+            mixer.music.load('resources/sounds/jungle.mp3')
+            mixer.music.play(-1)
             for i in range(0, 3 + dif):
                 room.oppons.append(Snake(r.randint(550, 850), r.randint(10, 450), opon_speeds, poison_chance=250-(50*dif)))
         elif room.name == "Mountain":

@@ -164,7 +164,7 @@ class Bullet(Attack):
         self.rect.topleft = (self.x, self.y)
 
 class Melee(Attack):
-    def __init__(self, img_path, x_distance, y_distance, duration=300, width=275,height=85, chance=100, telegraph_time=100):
+    def __init__(self, img_path, x_distance, y_distance, duration=300, width=275,height=85, chance=100, telegraph_time=0):
         super().__init__(img_path, width,height, chance)
         self.x_distance = x_distance
         self.y_distance = y_distance
@@ -190,34 +190,39 @@ class Melee(Attack):
             self.x = attacker.x - self.x_distance
             self.y = attacker.y + self.y_distance
             self.rect.topleft = (self.x, self.y)
+
             if now - self.start  < self.telegraph_time:
                 return
+            
+            if now - self.start  < self.telegraph_time and self.telegraph_time > 0:
+                mixer.Sound('resources/sounds/explosion.wav').play()
+            
             # single hit per slash
             if not self.hit_done and self.rect.colliderect(victim.rect):
-                victim.take_damage()
+                victim.take_damage(2)
                 self.hit_done = True
 
             # end slash after duration
             if now - self.start >= self.duration:
                 self.active = False
                 self.hit_done = False
+
     def display(self, game):
         if self.active:
-            if pygame.time.get_ticks() - self.start  < self.telegraph_time:
-                crop_rect = pygame.Rect(self.x+175,self.y, 100, 85) # Crops a 100x100 area starting at (50, 50)
-
-                # Create a new surface for the cropped image
-                cropped_image = pygame.Surface(crop_rect.size, pygame.SRCALPHA) # SRCALPHA for transparency
-
-                # Blit the cropped region of the original image onto the new surface
+            if pygame.time.get_ticks() - self.start < self.telegraph_time:
+                # Show only a portion of the slash (telegraph warning)
+                crop_rect = pygame.Rect(175, 0, 100, 85)  # Crop from the image itself
+                
+                cropped_image = pygame.Surface(crop_rect.size, pygame.SRCALPHA)
                 cropped_image.blit(self.img, (0, 0), crop_rect)
-
-                # Now 'cropped_image' holds the cropped portion
-                # You can then blit 'cropped_image' to your screen or use it as needed
-                game.screen.blit(cropped_image, (200, 150))
-
+                
+                # Display the telegraph at the slash position
+                game.screen.blit(cropped_image, (self.x + 175, self.y))
             else:
+                # Show full slash after telegraph time
                 game.screen.blit(self.img, (self.x, self.y))
+
+
 
 
 class Character(ABC):
@@ -321,9 +326,9 @@ class Knight(Character):
             self.sword_rect.topleft = (sword_x, sword_y)
             game.screen.blit(self.sword_img, self.sword_rect)
 
-    def take_damage(self):
+    def take_damage(self, amount = 1):
         if not self.invincible:
-            self.hp -= 1
+            self.hp -= amount
             mixer.Sound('resources/sounds/explosion.wav').play()
 
             self.invincible = True
@@ -387,7 +392,7 @@ class Enemy(Character):
         # schedule first run period (they start moving immediately)
         self.next_state_change = now + random.randint(self.run_min_ms, self.run_max_ms)
 
-    def move(self, player):
+    def move(self, player, oppons):
         #for the randomness of when the enemies pause and keep going
 
         now = pygame.time.get_ticks()
@@ -431,6 +436,20 @@ class Enemy(Character):
             
             # if random.randint(0,500) == 0:
             #     self.change = -(self.change)
+
+
+            for other_enemy in oppons:
+                if other_enemy != self and self.rect.colliderect(other_enemy.rect):
+                    # Simple push-back: move self out of collision
+                    if self.rect.centerx < other_enemy.rect.centerx:
+                        self.rect.right = other_enemy.rect.left
+                    else:
+                        self.rect.left = other_enemy.rect.right
+
+                    if self.rect.centery < other_enemy.rect.centery:
+                        self.rect.bottom = other_enemy.rect.top
+                    else:
+                        self.rect.top = other_enemy.rect.bottom
                 
                 
             # Borders of screen
@@ -483,8 +502,8 @@ class Snake(Enemy):
 
         self.poison = Bullet('resources/enemies/poison.png', 32,32, poison_chance)
     
-    def move(self, player):
-        super().move(player)
+    def move(self, player, oppons):
+        super().move(player, oppons)
 
         if self.poison.active == False:
             self.poison.try_shoot(self, player)
@@ -507,9 +526,9 @@ class Wolf(Enemy):
         self.slash = Melee('resources/enemies/claw_slash.png', 48, 8, 64,64)
         
 
-    def move(self, player):
+    def move(self, player, oppons):
         # Keep chase behaviour
-        super().move(player)
+        super().move(player, oppons)
 
         self.slash.move(self,player)
 
@@ -531,9 +550,9 @@ class Dragon(Enemy):
         self.rect = self.img.get_rect(topleft=(self.x, self.y))
 
         self.fire_ball = Bullet('resources/enemies/fire_ball.png', 316/4,103/4, chance=100) # crop: 316,103 | before:88,26
-        self.fire_cone = Melee('resources/enemies/fire_cone.png', 270, 40, chance=300)
+        self.fire_cone = Melee('resources/enemies/fire_cone.png', 270,40, duration=1500, chance=300, telegraph_time=1200)
 
-    def move(self, player):
+    def move(self, player, opppons):
         if random.randint(0,100) == 0:
             self.change = -(self.change)
         self.y += self.change
