@@ -379,7 +379,7 @@ class Enemy(Character):
         # We can edit this compared to difficulty level
         # Random stop/start behavior (milliseconds)
         # How long they normally run before a possible stop (min, max)
-        self.run_min_ms = 800    # at least running
+        self.run_min_ms = 3000 # 800    # at least running
         self.run_max_ms = 4500   # at most running
 
         # How long they stay stopped when they do stop
@@ -414,42 +414,102 @@ class Enemy(Character):
         # Only update position when not paused
         if not self.is_paused:
 
-            if self.x > player.x:
-                self.x += -(abs(self.change))
-            else:
-                self.x += abs(self.change)
-            if self.y > player.y:
-                self.y += -(abs(self.change))
-            else:
-                self.y += abs(self.change)
-            # if random.randint(0,500) == 0:
-            #     self.change = -(self.change)
-
             # if self.x > player.x:
-            #     self.x += -(self.change)
+            #     self.x += -(abs(self.change))
             # else:
             #     self.x += abs(self.change)
             # if self.y > player.y:
-            #     self.y += -(self.change)
+            #     self.y += -(abs(self.change))
             # else:
             #     self.y += abs(self.change)
+            # # if random.randint(0,500) == 0:
+            # #     self.change = -(self.change)
+
+            # # if self.x > player.x:
+            # #     self.x += -(self.change)
+            # # else:
+            # #     self.x += abs(self.change)
+            # # if self.y > player.y:
+            # #     self.y += -(self.change)
+            # # else:
+            # #     self.y += abs(self.change)
             
-            # if random.randint(0,500) == 0:
-            #     self.change = -(self.change)
+            # # if random.randint(0,500) == 0:
+            # #     self.change = -(self.change)
 
 
+            # # Update to potential new position
+            # self.rect.topleft = (self.x, self.y)
+
+            # # Collision with other enemies
+            # for other_enemy in oppons:
+            #     if other_enemy != self and self.rect.colliderect(other_enemy.rect):
+            #         # Simple push-back: move self out of collision
+            #         # Horizontally
+            #         if self.rect.centerx < other_enemy.rect.centerx:
+            #             self.rect.right = other_enemy.rect.left
+            #         else:
+            #             self.rect.left = other_enemy.rect.right
+            #         # Vertically
+            #         if self.rect.centery < other_enemy.rect.centery:
+            #             self.rect.bottom = other_enemy.rect.top
+            #         else:
+            #             self.rect.top = other_enemy.rect.bottom
+
+
+            # Try horizontal movement first
+            desired_x = self.x
+            if self.x > player.x:
+                desired_x += -(abs(self.change))
+            else:
+                desired_x += abs(self.change)
+            
+            self.rect.topleft = (desired_x, self.y)
+            
+            # Check horizontal collision
+            collision_x = False
             for other_enemy in oppons:
                 if other_enemy != self and self.rect.colliderect(other_enemy.rect):
-                    # Simple push-back: move self out of collision
-                    if self.rect.centerx < other_enemy.rect.centerx:
-                        self.rect.right = other_enemy.rect.left
-                    else:
-                        self.rect.left = other_enemy.rect.right
+                    collision_x = True
+                    break
+            
+            # Apply horizontal movement if no collision
+            if not collision_x:
+                self.x = desired_x
+            
+            # Try vertical movement
+            desired_y = self.y
+            if self.y > player.y:
+                desired_y += -(abs(self.change))
+            else:
+                desired_y += abs(self.change)
+            
+            self.rect.topleft = (self.x, desired_y)
+            
+            # Check vertical collision
+            collision_y = False
+            for other_enemy in oppons:
+                if other_enemy != self and self.rect.colliderect(other_enemy.rect):
+                    collision_y = True
+                    break
+            
+            # Apply vertical movement if no collision
+            if not collision_y:
+                self.y = desired_y
 
-                    if self.rect.centery < other_enemy.rect.centery:
-                        self.rect.bottom = other_enemy.rect.top
-                    else:
-                        self.rect.top = other_enemy.rect.bottom
+            # # If both collided, push out diagonally
+            # if collision_x and collision_y:
+            #     if self.rect.centerx < other_enemy.rect.centerx:
+            #         self.x = other_enemy.x - self.rect.width - 1
+            #     else:
+            #         self.x = other_enemy.x + other_enemy.rect.width + 1
+
+            #     if self.rect.centery < other_enemy.rect.centery:
+            #         self.y = other_enemy.y - self.rect.height - 1
+            #     else:
+            #         self.y = other_enemy.y + other_enemy.rect.height + 1
+                
+            #     self.rect.topleft = (self.x, self.y)
                 
                 
             # Borders of screen
@@ -461,6 +521,10 @@ class Enemy(Character):
                 self.y = 0
             elif self.y >= (600-128):
                 self.y = (600-128)
+
+        # # Sync x, y back from rect after collisions and adjustments
+        # self.x = self.rect.x
+        # self.y = self.rect.y
 
         self.rect.topleft = (self.x, self.y)
         
@@ -486,6 +550,24 @@ class Enemy(Character):
         if self.rect.colliderect(other.rect):
             other.take_damage()
             # Implement collision response (e.g., move player back)
+    
+
+    def separate_from_enemies(self, oppons):
+        """Push this enemy away from others if overlapping (used at spawn time)"""
+        for other_enemy in oppons:
+            if other_enemy != self and self.rect.colliderect(other_enemy.rect):
+                # Calculate direction to push away
+                dx = self.rect.centerx - other_enemy.rect.centerx
+                dy = self.rect.centery - other_enemy.rect.centery
+                
+                # Normalize and push with a fixed distance
+                distance = math.sqrt(dx**2 + dy**2)
+                if distance > 0:
+                    push_distance = 65  # half of enemy size + buffer
+                    self.x = other_enemy.x + (dx / distance) * push_distance
+                    self.y = other_enemy.y + (dy / distance) * push_distance
+                
+                self.rect.topleft = (self.x, self.y)
             
 
 
