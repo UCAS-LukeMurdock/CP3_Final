@@ -37,51 +37,27 @@ def play(game):
         player.rect.topleft = (player.x, player.y)
 
         # spawn opponents based on room name (room.name is a Text object)
-
-        random_x = r.randint(550,850)
-        random_y = r.randint(10,450)
-        random_x_offset = 0
-        random_y_offset = 0
-        # random_x_offset = 100
-        # random_y_offset = 100
-        # if random_x < 650:
-        #     random_x_offset = r.randint(150,300)
-        # elif random_x > 750:
-        #     random_x_offset = r.randint(-300,-150)
-
-        # if random_y < 100:
-        #     random_y_offset = r.randint(150,300)
-        # elif random_y > 350:
-        #     random_y_offset = r.randint(-300,-150)
-
-
         if room.name == "Ocean":
             mixer.music.load('resources/sounds/ocean.wav')
             mixer.music.play(-1)
             for i in range(0, 2 + dif):
-
-                # if random_x < 650:
-                #     random_x_offset = r.randint(150,300)
-                # elif random_x > 750:
-                #     random_x_offset = r.randint(-300,-150)
-
-                # if random_y < 100:
-                #     random_y_offset = r.randint(150,300)
-                # elif random_y > 350:
-                #     random_y_offset = r.randint(-300,-150)
-
-                room.oppons.append(Urchin(random_x + i*random_x_offset, random_y + i*random_y_offset, opon_speeds))
+                room.oppons.append(Urchin(r.randint(550 -100*dif,850), r.randint(10,450), opon_speeds))
+                room.oppons[i].separate_from_enemies(room.oppons)
+                if dif == 2:
+                    room.oppons[i].change += 0.15
         elif room.name == "Jungle":
             mixer.music.load('resources/sounds/jungle.mp3')
             mixer.music.play(-1)
             for i in range(0, 3 + dif):
-                room.oppons.append(Snake(random_x + i*random_x_offset, random_y + i*random_y_offset, opon_speeds, poison_chance=250-(50*dif)))
+                room.oppons.append(Snake(r.randint(550,850), r.randint(10,450), opon_speeds, poison_chance=250-(50*dif)))
                 room.oppons[i].separate_from_enemies(room.oppons)
         elif room.name == "Mountain":
             for i in range(0, 4 + dif):
-                room.oppons.append(Wolf(random_x + i*random_x_offset, random_y + i*random_y_offset, opon_speeds))
+                room.oppons.append(Wolf(r.randint(550,850), r.randint(10,450), opon_speeds))
+                room.oppons[i].separate_from_enemies(room.oppons)
         elif room.name == "Cave":
-            room.oppons.append(Dragon(random_x + i*random_x_offset, random_y + i*random_y_offset, hp = 50*dif, change = opon_speeds+1, ball_chance=100-(25*dif), cone_chance=300-(25*dif)))
+            room.oppons.append(Dragon(r.randint(550,850), r.randint(10,450), hp = 50*dif, change = opon_speeds+1, ball_chance=100-(25*dif), cone_chance=300-(25*dif)))
+
 
 
         time_txt = Text(size=25, txt="", coord=(900,20))

@@ -116,7 +116,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
 
         for oppon in room.oppons:
             oppon.move(player, room.oppons)
-            oppon.collide_check(player)
+            oppon.touch_damage(player)
                 
         player.move()
             
