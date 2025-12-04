@@ -359,7 +359,6 @@ class Knight(Character):
         heart_item_img = pygame.transform.scale(heart_item_img, (347/4,318/4)) # start: 347,318  prior: 90,90
         heart_rect = heart_item_img.get_rect(topleft=(455,255))
         game.screen.blit(heart_item_img, heart_rect.topleft)
-        
 
         if heart_rect.colliderect(self.rect):
             if self.hp < 5:
@@ -395,19 +394,75 @@ class Enemy(Character):
         self.next_state_change = now + random.randint(self.run_min_ms, self.run_max_ms)
 
     def separate_from_enemies(self, oppons):
-        for other_enemy in oppons:
-            if  other_enemy != self and self.rect.colliderect(other_enemy.rect):
-                if self.rect.centerx < other_enemy.rect.centerx:
-                    self.x = other_enemy.x - self.rect.width - 1
-                else:
-                    self.x = other_enemy.x + other_enemy.rect.width + 1
+        # try_stop = True
+        # separated = False
 
-                if self.rect.centery < other_enemy.rect.centery:
-                    self.y = other_enemy.y - self.rect.height - 1
-                else:
-                    self.y = other_enemy.y + other_enemy.rect.height + 1
+        # while separated == False:
+        #     for other_enemy in oppons:
+        #         if  other_enemy != self and self.rect.colliderect(other_enemy.rect):
+        #             try_stop = False
+        #             if self.rect.centerx < other_enemy.rect.centerx:
+        #                 self.x = other_enemy.x - self.rect.width - 10
+        #             else:
+        #                 self.x = other_enemy.x + other_enemy.rect.width + 10
+
+        #             if self.rect.centery < other_enemy.rect.centery:
+        #                 self.y = other_enemy.y - self.rect.height - 10
+        #             else:
+        #                 self.y = other_enemy.y + other_enemy.rect.height + 10
+        #     if try_stop == True:
+        #         separated = True
             
-        self.rect.topleft = (self.x, self.y)
+        # self.rect.topleft = (self.x, self.y)
+
+        """Push this enemy away from others if overlapping (used at spawn time).
+        Uses small iterative nudges to avoid infinite loops and jerky movement.
+        """
+        MAX_ITERATIONS = 20
+        NUDGE_STEP = 8
+        
+        for iteration in range(MAX_ITERATIONS):
+            collision_found = False
+            
+            for other_enemy in oppons:
+                if other_enemy is self:
+                    continue
+                    
+                if self.rect.colliderect(other_enemy.rect):
+                    collision_found = True
+                    
+                    # Calculate direction away from other enemy
+                    dx = self.rect.centerx - other_enemy.rect.centerx
+                    dy = self.rect.centery - other_enemy.rect.centery
+                    
+                    # Handle case where they're at same position
+                    if dx == 0 and dy == 0:
+                        angle = random.uniform(0, 2 * math.pi)
+                        dx = math.cos(angle)
+                        dy = math.sin(angle)
+                    
+                    # Normalize direction
+                    distance = math.hypot(dx, dy)
+                    if distance > 0:
+                        dx /= distance
+                        dy /= distance
+                    
+                    # Nudge away
+                    self.x += dx * NUDGE_STEP
+                    self.y += dy * NUDGE_STEP
+                    
+                    # Clamp to screen bounds
+                    self.x = max(0, min(self.x, 1000 - self.rect.width))
+                    self.y = max(0, min(self.y, 600 - self.rect.height))
+                    
+                    self.rect.topleft = (int(self.x), int(self.y))
+                    break  # Check again from start with new position
+            
+            # If no collision found this iteration, we're done
+            if not collision_found:
+                break
+        
+        self.rect.topleft = (int(self.x), int(self.y))
 
     def move(self, player, oppons):
         #for the randomness of when the enemies pause and keep going
@@ -430,15 +485,18 @@ class Enemy(Character):
 
         # Only update position when not paused
         if not self.is_paused:
-            # COLLISION
+            # COLLISION / Movement
+            jump = 1
+            if random.randint(0,300) == 0:
+                jump = 30
             # Try horizontal movement first
             desired_x = self.x
             if self.x > player.x:
-                desired_x += -(abs(self.change)) + random.randint(-5,5)
+                desired_x += -(abs(self.change))*jump + random.choice([0, 0, 0, 0, 0, 0, 0, random.randint(-1,1)*.5, random.randint(-1,1)])
             else:
-                desired_x += abs(self.change)
+                desired_x += abs(self.change)*jump + random.choice([0, 0, 0, 0, 0, 0, 0, random.randint(-1,1)*.5, random.randint(-1,1)])
             
-            self.rect.topleft = (desired_x, self.y) + random.randint(-5,5)
+            self.rect.topleft = (desired_x, self.y)
             
             # Check horizontal collision
             collision_x = False
@@ -454,11 +512,11 @@ class Enemy(Character):
             # Try vertical movement
             desired_y = self.y
             if self.y > player.y:
-                desired_y += -(abs(self.change)) + random.randint(-5,5)
+                desired_y += -(abs(self.change))*jump + random.choice([0, 0, 0, 0, 0, 0, 0, random.randint(-1,1)*.5, random.randint(-1,1)])
             else:
-                desired_y += abs(self.change)
+                desired_y += abs(self.change)*jump + random.choice([0, 0, 0, 0, 0, 0, 0, random.randint(-1,1)*.5, random.randint(-1,1)])
             
-            self.rect.topleft = (self.x, desired_y) + random.randint(-5,5)
+            self.rect.topleft = (self.x, desired_y) 
             
             # Check vertical collision
             collision_y = False
