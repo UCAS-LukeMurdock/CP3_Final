@@ -39,6 +39,8 @@ def main():
     easy_button = Button(700,100, 'resources/buttons/easy.png')
     normal_button = Button(700,250, 'resources/buttons/normal.png')
     hard_button = Button(700,400, 'resources/buttons/hard.png')
+    slide_button = Button(175,500, 'resources/buttons/info.png', .2)
+    slide_circle = pygame.rect
 
 
     need_help = False
@@ -76,6 +78,10 @@ def main():
             need_help = not need_help
         if need_help:
             help.display(game, True)
+        
+        
+        # if slide_button.draw():
+
         
         if easy_button.draw(game, True):
             game.mode = 'easy'
