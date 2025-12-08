@@ -59,6 +59,7 @@ def play(game):
                 room.oppons[i].separate_from_enemies(room.oppons)
         elif room.name == "Cave":
             mixer.music.load('resources/sounds/cave.wav')
+            mixer.music.set_volume(0.8)
             mixer.music.play(-1)
             room.oppons.append(Dragon(r.randint(550,850), r.randint(10,450), hp = 50*dif, change = opon_speeds+1, ball_chance=100-(25*dif), cone_chance=300-(25*dif)))
 

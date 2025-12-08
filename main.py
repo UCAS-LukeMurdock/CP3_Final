@@ -26,7 +26,7 @@ def main():
     rich = pygame.transform.scale(rich, (1000,600))
 
     # Background music
-    mixer.music.load('resources/sounds/background.wav')
+    mixer.music.load('resources/sounds/start_game.wav')
     mixer.music.play(-1)
 
     # text
@@ -89,7 +89,7 @@ def main():
                 if game.mode == 'hard':
                     game.won_hard = True
                 game.best_times[game.mode][3].txt = f"{game.mode.title()}: {game.best_times[game.mode][1]}:{game.best_times[game.mode][2]:02}"
-            mixer.music.load('resources/sounds/background.wav')
+            mixer.music.load('resources/sounds/start_game.wav')
             mixer.music.play(-1)
 
 

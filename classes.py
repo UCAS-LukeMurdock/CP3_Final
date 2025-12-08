@@ -90,7 +90,7 @@ class Button:
             if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
                 self.clicked = True
                 action = True
-                mixer.Sound('resources/sounds/laser.wav').play()
+                mixer.Sound('resources/sounds/button_clicked.mp3').play()
         else:
             # Draw normally when not hovered
             game.screen.blit(self.img, self.rect)
