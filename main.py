@@ -12,7 +12,7 @@ def main():
     # Set up display
     screen = pygame.display.set_mode((1000,600))
     screen.fill((0,0,0))
-    game = WholeGame(screen)
+    game = WholeGame(screen, '', False, False)
 
     title = "Dragon Adventure"
     pygame.display.set_caption(title)
@@ -31,17 +31,20 @@ def main():
 
     # text
     title = Text(txt=title, coord=(225,5))
-    help_txt = " - Your goal is to slay the dragon\n     and steal its treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack\n - Press {key} to use special abilities"
-    help = Text(size=20, txt=help_txt, coord=(70,300))
+    help_words = " - Your goal is to slay the dragon\n     and steal its treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack\n - Press {key} to use special abilities"
+    help_text = Text(size=20, txt=help_words, coord=(70,220))
+    best_times_header = Text(size=25, txt="Best Times", coord=(430,500), underline=True)
+    slide_text = Text(size=20, txt="Slide Mode:", coord=(125,400))
+    quit_text = Text(size=20, txt="Quit:", coord=(700,400))
 
-    # help_button = Button(175,150, 'resources/buttons/help.png', .8)
-    help_button = Button(175,150, 'resources/buttons/info.png', .2)
+    # help_button = Button(175,150, 'resources/buttons/question.png', .8)
+    help_button = Button(175,100, 'resources/buttons/info.png', .2)
+    slide_button = Button(275,350, 'resources/buttons/question.png', .8)
+    quit_button = Button(750,350, 'resources/buttons/question.png', .8)
+
     easy_button = Button(700,100, 'resources/buttons/easy.png')
-    normal_button = Button(700,250, 'resources/buttons/normal.png')
-    hard_button = Button(700,400, 'resources/buttons/hard.png')
-    slide_button = Button(175,500, 'resources/buttons/info.png', .2)
-    slide_circle = pygame.rect
-
+    normal_button = Button(700,185, 'resources/buttons/normal.png')
+    hard_button = Button(700,270, 'resources/buttons/hard.png')
 
     need_help = False
     running = True
@@ -51,8 +54,11 @@ def main():
             game.screen.blit(background, (0,0))
         else:
             game.screen.blit(rich, (0,0))
+
         title.display(game)
-        Text(size=25, txt="Best Times", coord=(430,500), underline=True).display(game)
+        slide_text.display(game)
+        quit_text.display(game)
+        best_times_header.display(game)
         for mode in ['easy', 'normal', 'hard']:
             game.best_times[mode][3].display(game)
 
@@ -67,6 +73,8 @@ def main():
                     running = False
                 elif event.key == pygame.K_i or event.key == pygame.K_SLASH:
                     need_help = not need_help
+                elif event.key == pygame.K_s:
+                    game.slide = not game.slide
                 elif event.key == pygame.K_e or event.key == pygame.K_1:
                     game.mode = 'easy'
                 elif event.key == pygame.K_n or event.key == pygame.K_2:
@@ -74,14 +82,22 @@ def main():
                 elif event.key == pygame.K_h or event.key == pygame.K_3:
                     game.mode = 'hard'
 
+        if quit_button.draw(game):
+            running = False
+        pygame.draw.circle(game.screen, (255, 100, 100), (800,400), 45)
+
         if help_button.draw(game):
             need_help = not need_help
         if need_help:
-            help.display(game, True)
+            help_text.display(game, True)
         
+        if slide_button.draw(game):
+            game.slide = not game.slide
+        if game.slide == False:
+            pygame.draw.circle(game.screen, (255, 0, 0), (325,400), 45)
+        else:
+            pygame.draw.circle(game.screen, (0, 255, 0), (325,400), 45)
         
-        # if slide_button.draw():
-
         
         if easy_button.draw(game, True):
             game.mode = 'easy'

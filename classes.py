@@ -4,10 +4,10 @@ from abc import ABC, abstractmethod
 from pygame import mixer
 
 class WholeGame:
-    def __init__(self, screen, mode=''):
+    def __init__(self, screen, mode, slide, won_hard):
         self.screen = screen
         self.mode = mode
-        self.slide = False
+        self.slide = slide
         self.won_hard = False
         self.best_times = {
                 # total seconds, minutes, seconds
