@@ -11,8 +11,11 @@ def over(game, room, next_btn, time_txt, player):
     fire = pygame.transform.scale(fire, (1000,600))
 
     pygame.mixer.music.stop()
-    for i in range(0,4):
-        mixer.Sound('resources/sounds/explosion.wav').play()
+    if room.name != "Cave":
+        mixer.Sound('resources/sounds/lose.wav').play()
+    if room.name == "Cave":
+        for i in range(0,4):
+            mixer.Sound('resources/sounds/explosion.wav').play()
 
     while True:
         end = False
