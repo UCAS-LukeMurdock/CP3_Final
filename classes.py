@@ -146,7 +146,7 @@ class Bullet(Attack):
             self.y = shooter.y
             self.x_change = (target.x - shooter.x) / 75
             self.y_change = (target.y - shooter.y) / 75
-            mixer.Sound('resources/sounds/laser.wav').play()
+            mixer.Sound('resources/sounds/enemy_attacks.wav').play()
 
     def hit_check(self, target):
         if self.rect.colliderect(target.rect):
@@ -183,7 +183,8 @@ class Melee(Attack):
                 self.active = True
                 self.start = now
                 self.hit_done = False
-                mixer.Sound('resources/sounds/laser.wav').play()
+                
+                mixer.Sound('resources/sounds/wolf_attack.wav').play()
 
         # If currently slashing, handle hit-check and ending the slash
         if self.active:
@@ -331,7 +332,7 @@ class Knight(Character):
             self.hp -= amount
             if self.hp < 0:
                 self.hp = 0
-            mixer.Sound('resources/sounds/explosion.wav').play()
+            mixer.Sound('resources/sounds/knight_is_hit.wav').play()
 
             self.invincible = True
             self.invinc_start = pygame.time.get_ticks()
@@ -351,7 +352,7 @@ class Knight(Character):
             self.sword_active = True
             self.sword_start = pygame.time.get_ticks()
             self.sword_ready = False
-            mixer.Sound('resources/sounds/laser.wav').play()
+            mixer.Sound('resources/sounds/knight_attack.wav').play()
             # position will be updated on next display call / frame
 
     def healing(self, game):
@@ -363,7 +364,7 @@ class Knight(Character):
         if heart_rect.colliderect(self.rect):
             if self.hp < 5:
                 self.hp += 1
-                # mixer.Sound('resources/sounds/powerup.wav').play()
+                mixer.Sound('resources/sounds/health_increase.wav').play()
             return True
         return False
 
@@ -665,7 +666,7 @@ class Dragon(Enemy):
         if not self.alive:
             return False
         if sword_rect and self.rect.colliderect(sword_rect):
-            # mixer.Sound('resources/sounds/explosion.wav').play()
+            mixer.Sound('resources/sounds/knight_is_hit.wav').play()
             if self.hp > 1:
                 self.hp -= 1
             else:

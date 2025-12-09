@@ -6,8 +6,7 @@ from classes import Text
 def won(game, next_btn, time_txt):
 
     pygame.mixer.music.stop()
-    mixer.Sound('resources/sounds/explosion.wav').play()
-    mixer.Sound('resources/sounds/explosion.wav').play()
+    mixer.Sound('resources/sounds/win.wav').play()
     
     while True:
         end = False
@@ -33,6 +32,6 @@ def won(game, next_btn, time_txt):
         if next_btn.draw(game, True):
             end = True
         if end:
-            mixer.Sound('resources/sounds/laser.wav').play()
+            mixer.Sound('resources/sounds/win.wav').play()
             return
         pygame.display.flip()
