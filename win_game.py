@@ -32,6 +32,11 @@ def won(game, next_btn, time_txt):
         if next_btn.draw(game, True):
             end = True
         if end:
-            mixer.Sound('resources/sounds/win.wav').play()
+            if game.mode == "easy":
+                mixer.Sound('resources/sounds/coins1.wav').play()
+            elif game.mode == "normal":
+                mixer.Sound('resources/sounds/coins2.wav').play()
+            elif game.mode == "hard":
+                mixer.Sound('resources/sounds/coins3.wav').play()
             return
         pygame.display.flip()
