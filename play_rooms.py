@@ -22,10 +22,10 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
 
 
 
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return False
@@ -37,36 +37,59 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
                 elif event.key == pygame.K_q: # GET RID OF IN FUTURE - Skip button
                     return True
                 
-                if game.slide == True:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                        player.x_change = -3
-                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                        player.x_change = 3
-                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
-                        player.y_change = -3
-                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                        player.y_change = 3
-                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:   # left click
                     player.attack()
                 
+
         keys = pygame.key.get_pressed()
 
         if game.slide == False:
             player.x_change = 0
             player.y_change = 0
 
-        if game.slide == False:
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                player.x_change = -3
-            elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                player.x_change = 3
+        # if game.slide:
+        #     if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
+        #         player.x_change = 0
+        #     elif (keys[pygame.K_UP] or keys[pygame.K_w]) and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
+        #         player.y_change = 0
+        #     elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and (keys[pygame.K_UP] or keys[pygame.K_w]):
+        #         player.x_change = -3
+        #         player.y_change = -3
+        #     elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
+        #         player.x_change = -3
+        #         player.y_change = 3
+        #     elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (keys[pygame.K_UP] or keys[pygame.K_w]):
+        #         player.x_change = 3
+        #         player.y_change = -3
+        #     elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
+        #         player.x_change = 3
+        #         player.y_change = 3
+            
+        #     elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        #         player.x_change = -3
+        #         player.y_change = 0
+        #     elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        #         player.x_change = 3
+        #         player.y_change = 0
+        #     elif keys[pygame.K_UP] or keys[pygame.K_w]:
+        #         player.y_change = -3
+        #         player.x_change = 0
+        #     elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        #         player.y_change = 3
+        #         player.x_change = 0
 
-            if keys[pygame.K_UP] or keys[pygame.K_w]:
-                player.y_change = -3
-            elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
-                player.y_change = 3
+        # if game.slide == False:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            player.x_change = -3
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            player.x_change = 3
+
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            player.y_change = -3
+        elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            player.y_change = 3
+            
         # else:
         #      if event.type == pygame.KEYDOWN:
         #         if event.key == pygame.K_ESCAPE:

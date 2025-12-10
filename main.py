@@ -31,7 +31,7 @@ def main():
 
     # text
     title = Text(txt=title, coord=(225,5))
-    help_words = " - Your goal is to slay the dragon\n     and steal its treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack\n - Press {key} to use special abilities"
+    help_words = " - Your goal is to slay the dragon\n     to steal its treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack\n - Press {key} to use special abilities"
     help_text = Text(size=20, txt=help_words, coord=(70,220))
     best_times_header = Text(size=25, txt="Best Times", coord=(430,500), underline=True)
     slide_text = Text(size=30, txt="Slide Mode:", coord=(97,387))
@@ -46,8 +46,8 @@ def main():
     normal_button = Button(700,185, 'resources/buttons/normal.png')
     hard_button = Button(700,270, 'resources/buttons/hard.png')
 
-    quit_img = pygame.transform.scale(pygame.image.load('resources/buttons/quit.png'), (65,65))
-
+    quit_img = pygame.transform.scale(pygame.image.load('resources/buttons/cross.png'), (65,65))
+    # quit_img.fill((250, 250, 250), special_flags=pygame.BLEND_RGB_ADD)
 
     need_help = False
     running = True
@@ -87,8 +87,8 @@ def main():
 
         if quit_button.draw(game):
             running = False
-        pygame.draw.circle(game.screen, (55, 0, 0), (800,400), 45)
-        game.screen.blit(quit_img, (765,370))
+        pygame.draw.circle(game.screen, (100, 0, 0), (800,400), 45)
+        game.screen.blit(quit_img, (768,368))
 
         if help_button.draw(game):
             need_help = not need_help

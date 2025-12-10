@@ -14,18 +14,21 @@ def play(game):
     start_time = pygame.time.get_ticks()//1000
 
     next_btn = Button(436,450, 'resources/buttons/continue.png')
-    rooms = [Room('resources/backgrounds/ocean.png', Text(txt="Ocean", coord=(400,5))),
-            Room('resources/backgrounds/jungle.png', Text(txt="Jungle", coord=(400,5))),
-            Room('resources/backgrounds/rock.png', Text(txt="Mountain", coord=(355,5))),
-            Room('resources/backgrounds/cave.png', Text(txt="Cave", coord=(425,5)))]
+    rooms = [Room('resources/backgrounds/ocean.png', Text(txt="Ocean", color=(), coord=(400,5))),
+            Room('resources/backgrounds/jungle.png', Text(txt="Jungle", color=(), coord=(400,5))),
+            Room('resources/backgrounds/rock.png', Text(txt="Mountain", color=(), coord=(355,5))),
+            Room('resources/backgrounds/cave.png', Text(txt="Cave", color=(), coord=(425,5)))]
     player = Knight(10,250)
 
     if game.mode == "easy":
         dif = 0
+        dif_color = (0,230,0)
     elif game.mode == "normal":
         dif = 1
+        dif_color = (255,175,0)
     elif game.mode == "hard":
         dif = 2
+        dif_color = (255,0,0)
     else:
         dif = 1
         
@@ -36,6 +39,7 @@ def play(game):
         # player.y = 250
         player.rect.topleft = (player.x, player.y)
 
+        room.name.color = dif_color
         # spawn opponents based on room name (room.name is a Text object)
         if room.name == "Ocean":
             mixer.music.load('resources/sounds/ocean.wav')
