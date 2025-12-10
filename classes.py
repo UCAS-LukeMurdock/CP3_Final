@@ -197,7 +197,8 @@ class Melee(Attack):
                 return
             
             if now - self.start  < self.telegraph_time and self.telegraph_time > 0:
-                mixer.Sound('resources/sounds/explosion.wav').play()
+                #mixer.Sound('resources/sounds/explosion.wav').play()
+                mixer.Sound('resources/sounds/flame.wav').play()
             
             # single hit per slash
             if not self.hit_done and self.rect.colliderect(victim.rect):
@@ -614,6 +615,7 @@ class Dragon(Enemy):
 
         # Fire cone attack
         self.fire_cone.move(self, player)
+        
 
     def display(self, game):
         # Draw the dragon and the cone (if active)
