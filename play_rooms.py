@@ -1,7 +1,6 @@
 # File that plays one room
 import pygame
 from pygame import mixer
-from classes import Text
 
 def play_room(game, player, room, next_btn, clock, start_time, time_txt):
     healed = False

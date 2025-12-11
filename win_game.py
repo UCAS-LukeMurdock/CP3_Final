@@ -1,7 +1,7 @@
 # Won Game
 import pygame
 from pygame import mixer
-from classes import Text
+from general_classes import Text
 
 def won(game, next_btn, time_txt):
 
@@ -34,7 +34,11 @@ def won(game, next_btn, time_txt):
         if end:
             if game.mode == "easy":
                 mixer.Sound('resources/sounds/coins1.wav').play()
+                mixer.Sound('resources/sounds/coins1.wav').play()
+                mixer.Sound('resources/sounds/coins1.wav').play()
             elif game.mode == "normal":
+                mixer.Sound('resources/sounds/coins2.wav').play()
+                mixer.Sound('resources/sounds/coins2.wav').play()
                 mixer.Sound('resources/sounds/coins2.wav').play()
             elif game.mode == "hard":
                 mixer.Sound('resources/sounds/coins3.wav').play()

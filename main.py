@@ -2,7 +2,7 @@
 
 import pygame
 from pygame import mixer
-from classes import WholeGame, Button, Text
+from general_classes import WholeGame, Button, Text
 from play_game import play 
 
 

@@ -3,7 +3,10 @@ import pygame
 from pygame import mixer
 import random as r
 
-from classes import Button, Text, Room, Knight, Urchin, Snake, Wolf, Dragon
+from general_classes import Room, Button, Text
+from character_classes import Knight
+from enemy_classes import Urchin, Snake, Wolf, Dragon
+
 from play_rooms import play_room
 from game_over import over
 from win_game import won

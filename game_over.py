@@ -1,7 +1,7 @@
 # Game Over (Lost)
 import pygame
 from pygame import mixer
-from classes import Text
+from general_classes import Text
 
 def over(game, room, next_btn, time_txt, player):
     player.x = 455
