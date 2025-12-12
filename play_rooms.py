@@ -2,13 +2,16 @@
 import pygame
 from pygame import mixer
 
+# each of the rooms the knight plays in
 def play_room(game, player, room, next_btn, clock, start_time, time_txt):
+    # the arrow to let the knight know to go to the next room(click button or walk to the right edge)
     go = pygame.transform.scale(pygame.image.load('resources/go.png'), (80,80))
     healed = False
 
+    # loop for each room when player is alive
     while player.hp > 0:
         next = False
-        # draw background and room title
+        # display background, room name, and time
         room.display_back(game)
         room.name.display(game)
 
@@ -22,7 +25,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
         time_txt.display(game)
 
 
-
+    # what happens when the user clicks these keys when playing in each room
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -35,8 +38,6 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
                 elif event.key == pygame.K_RETURN:
                     if not room.oppons:
                         next = True
-                elif event.key == pygame.K_q: # GET RID OF IN FUTURE - Skip button
-                    return True
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:   # left click
