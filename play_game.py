@@ -13,6 +13,7 @@ from win_game import won
 
 def play(game):
     
+    # Set up the different rooms
     clock = pygame.time.Clock()
     start_time = pygame.time.get_ticks()//1000
 
@@ -37,13 +38,12 @@ def play(game):
         
     opon_speeds = 0.3 +.1*dif
 
+    # Set up the enemies for each room
     for room in rooms:
         player.x = 10
-        # player.y = 250
         player.rect.topleft = (player.x, player.y)
-
         room.name.color = dif_color
-        # spawn opponents based on room name (room.name is a Text object)
+
         if room.name == "Ocean":
             mixer.music.load('resources/sounds/ocean.wav')
             mixer.music.play(-1)
@@ -71,21 +71,22 @@ def play(game):
             room.oppons.append(Dragon(800, r.randint(10,450), hp = 50*dif, change = opon_speeds+1, ball_chance=100-(25*dif), cone_chance=300-(25*dif)))
 
 
-
+        # Playing each room
         time_txt = Text(size=25, txt="", coord=(900,20))
         if play_room(game, player, room, next_btn, clock, start_time, time_txt) == False:
             return
         
-        
+        # Calculating Time for end game screens
         time = pygame.time.get_ticks()//1000 - start_time
         time_txt = Text(size=30, txt=f"{time//60:02}:{time%60:02}", coord=(460,545))
         
+        # Losing
         if player.hp <= 0:
             next_btn.rect.topleft = (500-128/2, 300-128/2)
             over(game, room, next_btn, time_txt, player)
             return
     
-                
+    # Winning
     next_btn.rect.topleft = (500-128/2, 300-128/2)
     won(game, next_btn, time_txt)
 

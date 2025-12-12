@@ -1,4 +1,4 @@
-# LM and AX  CP3 Final- Dungeon Crawler
+# LM and AX  CP3 Final- Dragon Adventure (Dungeon Crawler)
 
 import pygame
 from pygame import mixer
@@ -19,9 +19,9 @@ def main():
     icon = pygame.transform.scale(pygame.image.load('resources/dragon_icon.png'), (32,32))
     pygame.display.set_icon(icon)
 
+    # Backgrounds
     background = pygame.image.load('resources/backgrounds/sword.png')
     background = pygame.transform.scale(background, (1000,600))
-
     rich = pygame.image.load('resources/backgrounds/gold.png')
     rich = pygame.transform.scale(rich, (1000,600))
 
@@ -29,15 +29,14 @@ def main():
     mixer.music.load('resources/sounds/start_game.wav')
     mixer.music.play(-1)
 
-    # text
+    # Text
     title = Text(txt=title, coord=(225,5))
     help_words = " - The Knight is left-handed\n - Your goal is to slay the dragon\n     in order to steal its treasure\n - Movement: AWSD/Arrow keys\n - Attack: Space/left-click" # treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack
     help_text = Text(size=20, txt=help_words, coord=(70,220))
     best_times_header = Text(size=25, txt="Best Times", coord=(430,500), underline=True)
     slide_text = Text(size=30, txt="Slide Mode:", coord=(97,387))
-    # quit_text = Text(size=20, txt="Quit:", coord=(700,400))
 
-    # help_button = Button(175,150, 'resources/buttons/question.png', .8)
+    # Buttons
     help_button = Button(175,100, 'resources/buttons/info.png', .2)
     slide_button = Button(280,355, 'resources/buttons/question.png', .7)
     quit_button = Button(750,350, 'resources/buttons/question.png', .8)
@@ -47,25 +46,28 @@ def main():
     hard_button = Button(700,270, 'resources/buttons/hard.png')
 
     quit_img = pygame.transform.scale(pygame.image.load('resources/buttons/cross.png'), (65,65))
-    # quit_img.fill((250, 250, 250), special_flags=pygame.BLEND_RGB_ADD)
+
 
     need_help = True
     running = True
+
     while running:
+
+        # Display Background
         game.mode = ''
         if not game.won_hard:
             game.screen.blit(background, (0,0))
         else:
             game.screen.blit(rich, (0,0))
 
+        # Display Text
         title.display(game)
         slide_text.display(game)
-        # quit_text.display(game)
         best_times_header.display(game)
         for mode in ['easy', 'normal', 'hard']:
             game.best_times[mode][3].display(game)
 
-        # loop events
+        # Loop events
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -85,6 +87,7 @@ def main():
                 elif event.key == pygame.K_h or event.key == pygame.K_3:
                     game.mode = 'hard'
 
+        # Display Buttons
         if quit_button.draw(game):
             running = False
         pygame.draw.circle(game.screen, (100, 0, 0), (800,400), 45)
@@ -110,6 +113,7 @@ def main():
         elif hard_button.draw(game, True):
             game.mode = 'hard'
         
+        # Play game
         if game.mode != '':
             if play(game):
                 if game.mode == 'hard':
