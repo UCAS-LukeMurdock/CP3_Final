@@ -10,7 +10,7 @@ def main():
     pygame.init()
 
     # Set up display
-    screen = pygame.display.set_mode((1000,600))
+    screen = pygame.display.set_mode((1000,600), pygame.SCALED | pygame.RESIZABLE)
     screen.fill((0,0,0))
     game = WholeGame(screen, '', False, False)
 
@@ -39,7 +39,7 @@ def main():
 
     # help_button = Button(175,150, 'resources/buttons/question.png', .8)
     help_button = Button(175,100, 'resources/buttons/info.png', .2)
-    slide_button = Button(275,350, 'resources/buttons/question.png', .8)
+    slide_button = Button(280,355, 'resources/buttons/question.png', .7)
     quit_button = Button(750,350, 'resources/buttons/question.png', .8)
 
     easy_button = Button(700,100, 'resources/buttons/easy.png')
@@ -98,9 +98,9 @@ def main():
         if slide_button.draw(game):
             game.slide = not game.slide
         if game.slide == False:
-            pygame.draw.circle(game.screen, (255, 0, 0), (325,400), 45)
+            pygame.draw.circle(game.screen, (255, 0, 0), (325,400), 40)
         else:
-            pygame.draw.circle(game.screen, (0, 255, 0), (325,400), 45)
+            pygame.draw.circle(game.screen, (0, 255, 0), (325,400), 40)
         
         
         if easy_button.draw(game, True):
