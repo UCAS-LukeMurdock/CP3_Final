@@ -3,7 +3,9 @@ import pygame
 from pygame import mixer
 
 def play_room(game, player, room, next_btn, clock, start_time, time_txt):
+    go = pygame.transform.scale(pygame.image.load('resources/go.png'), (80,80))
     healed = False
+
     while player.hp > 0:
         next = False
         # draw background and room title
@@ -122,6 +124,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
 
         # if room cleared, wait for next button press to continue
         if not room.oppons:
+            game.screen.blit(go, (870,250))
             if (room.name == "Jungle" or room.name == "Mountain") and healed == False:
                 if player.healing(game):
                     healed = True

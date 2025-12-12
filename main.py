@@ -31,7 +31,7 @@ def main():
 
     # text
     title = Text(txt=title, coord=(225,5))
-    help_words = " - Your goal is to slay the dragon\n     to steal its treasure\n - Movement: AWSD/Arrowkeys | Attack: Space\n - Left-handed, rooms" # treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack
+    help_words = " - The Knight is left-handed\n - Your goal is to slay the dragon\n     in order to steal its treasure\n - Movement: AWSD/Arrow keys\n - Attack: Space/left-click" # treasure\n - Use arrow keys or AWSD for movement\n - Press space for attack
     help_text = Text(size=20, txt=help_words, coord=(70,220))
     best_times_header = Text(size=25, txt="Best Times", coord=(430,500), underline=True)
     slide_text = Text(size=30, txt="Slide Mode:", coord=(97,387))
