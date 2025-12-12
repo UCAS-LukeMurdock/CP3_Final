@@ -35,8 +35,8 @@ class Bullet(Attack):
             self.active = True
             self.x = shooter.x
             self.y = shooter.y
-            self.x_change = (target.x - shooter.x) / 75
-            self.y_change = (target.y - shooter.y) / 75
+            self.x_change = (target.x - shooter.x) / 90 #75
+            self.y_change = (target.y - shooter.y) / 90 #75
             mixer.Sound('resources/sounds/enemy_attacks.wav').play()
 
     def hit_check(self, target):
