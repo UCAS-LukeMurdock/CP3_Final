@@ -1,4 +1,5 @@
 # Pseudocode
+#commments for classes
 
 
 """ Wolf Attacking ---------------------------------

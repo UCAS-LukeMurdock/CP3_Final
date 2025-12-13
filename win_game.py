@@ -3,6 +3,7 @@ import pygame
 from pygame import mixer
 from general_classes import Text
 
+#function when you win any of the levels
 def won(game, next_btn, time_txt):
 
     pygame.mixer.music.stop()
@@ -11,6 +12,7 @@ def won(game, next_btn, time_txt):
     while True:
         end = False
         game.screen.fill((0,250,0))
+        #When you win each level
         won_text = Text(txt="YOU WON!", coord=(335,100))
         dif_text = Text(size=20, txt=f"Congratulations for beating {game.mode} difficulty", coord=(295,400))
         won_text.display(game)
@@ -18,6 +20,7 @@ def won(game, next_btn, time_txt):
 
         time_txt.display(game)
 
+        # ways to exit the win screen
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return  # exit play and return to caller
@@ -32,6 +35,7 @@ def won(game, next_btn, time_txt):
         if next_btn.draw(game, True):
             end = True
         if end:
+            #the sounds for coins when you win easy, normal, and hard leading up to win the "treasure"
             if game.mode == "easy":
                 mixer.Sound('resources/sounds/coins1.wav').play()
                 mixer.Sound('resources/sounds/coins1.wav').play()
