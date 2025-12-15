@@ -166,12 +166,14 @@ class Enemy(Character):
 
 
 class Urchin(Enemy):
+    """ The attacks for the urchin are the same for all of the animals except the other eneemies have other attacks as well"""
     def __init__(self, x,y, change=0.15):
         self.img_path = 'resources/enemies/urchin.png'
         super().__init__(x,y, change)
 
 
 class Snake(Enemy):
+    """ The snakes attack are the poison spit balls from the bullet class"""
     def __init__(self, x,y, change=0.15, poison_chance=150):
         self.img_path = 'resources/enemies/snake.png'
         super().__init__(x,y, change)
@@ -194,7 +196,7 @@ class Snake(Enemy):
 
 
 class Wolf(Enemy):
-    # I dont know if it works completely rn and I don't understand all of it yet
+    """ The wolf attack is the claw slash from the melee class"""
     def __init__(self, x, y, change=0.15):
         self.img_path = 'resources/enemies/wolf.png'
         super().__init__(x, y, change)
@@ -216,6 +218,7 @@ class Wolf(Enemy):
 
 
 class Dragon(Enemy):
+    """ The dragon has two attacks: fire ball and fire cone. These come from both the bullet and melee classes"""
     def __init__(self, x,y, hp, change=0.2, ball_chance=100, cone_chance=300):
         self.img_path = 'resources/enemies/blue_dragon.png'
         super().__init__(x,y, change)
@@ -229,6 +232,7 @@ class Dragon(Enemy):
         self.fire_cone = Melee('resources/enemies/fire_cone.png', 270,40, duration=3000, chance=300, telegraph_time=1200) # 1500 duration
 
     def move(self, player, opppons):
+        """ It randomly moves up and down while shooting fire balls and using the fire cone attack"""
         if r.randint(0,100) == 0:
             self.change = -(self.change)
         self.y += self.change
@@ -255,6 +259,7 @@ class Dragon(Enemy):
         # Draw the dragon and the cone (if active)
         game.screen.blit(self.img, (self.x, self.y))
 
+        #for easy mode, the dragon does not have health displayed since it is just one hit
         if game.mode != 'easy':
             self.display_health(game)
 

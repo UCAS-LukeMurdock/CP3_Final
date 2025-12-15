@@ -134,6 +134,7 @@ class Knight(Character):
             # position will be updated on next display call / frame
 
     def healing(self, game):
+        #what the heart does when the knight hovers over it
         heart_item_img = pygame.image.load("resources/player/hearts/heart_up.png")
         heart_item_img = pygame.transform.scale(heart_item_img, (347/4,318/4)) # start: 347,318  prior: 90,90
         heart_rect = heart_item_img.get_rect(topleft=(455,255))

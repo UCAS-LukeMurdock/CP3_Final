@@ -25,12 +25,14 @@ class Attack(ABC):
 
 
 class Bullet(Attack):
+    """This is for the attacks of the snakes and the dragon"""
     def __init__(self, img_path, width,height, chance):
         super().__init__(img_path, width,height, chance)
         self.x_change = 0
         self.y_change = 0
 
     def try_shoot(self, shooter, target):
+        """ randomly decide to shoot towards the knight"""
         if r.randint(0,self.chance) == 0:
             self.active = True
             self.x = shooter.x
@@ -55,6 +57,7 @@ class Bullet(Attack):
         self.rect.topleft = (self.x, self.y)
 
 class Melee(Attack):
+    """This is for the attacks from the wolf and dragon"""
     def __init__(self, img_path, x_distance, y_distance, duration=300, width=275,height=85, chance=100, telegraph_time=0):
         super().__init__(img_path, width,height, chance)
         self.x_distance = x_distance

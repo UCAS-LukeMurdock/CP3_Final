@@ -46,6 +46,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
 
         keys = pygame.key.get_pressed()
 
+        #The code for slide mode
         if game.slide:
             if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
                 player.x_change = 0
@@ -77,7 +78,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
                 player.y_change = 3
                 player.x_change = 0
 
-
+        #The code for normal mode moving up, down, side to side
         if game.slide == False:
             player.x_change = 0
             player.y_change = 0

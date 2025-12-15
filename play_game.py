@@ -47,6 +47,7 @@ def play(game):
         if room.name == "Ocean":
             mixer.music.load('resources/sounds/ocean.wav')
             mixer.music.play(-1)
+            #the amount of enemies made depending on difficulty levels(similar code for all of the other enemies in different rooms as well)
             for i in range(0, 2 + dif):
                 room.oppons.append(Urchin(r.randint(550 -100*dif,850), r.randint(10,450), opon_speeds))
                 room.oppons[i].separate_from_enemies(room.oppons)
