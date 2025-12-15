@@ -41,7 +41,7 @@ def over(game, room, next_btn, time_txt, player):
 
         player.heart_status(game)
 
-        if next_btn.draw_and_clickgame, True):
+        if next_btn.draw_and_click(game, True):
             end = True
         if end:
             mixer.Sound('resources/sounds/explosion.wav').play()

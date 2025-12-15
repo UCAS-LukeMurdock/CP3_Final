@@ -96,9 +96,9 @@ class Enemy(Character):
             # Try horizontal movement first
             desired_x = self.x
             if self.x > player.x:
-                desired_x += -(abs(self.change))*jump_x # + r.choice([0, 0, 0, 0, 0, 0, 0, r.randint(-1,1)*.5, r.randint(-1,1)])
+                desired_x += -(abs(self.change))*jump_x
             else:
-                desired_x += abs(self.change)*jump_x # + r.choice([0, 0, 0, 0, 0, 0, 0, r.randint(-1,1)*.5, r.randint(-1,1)])
+                desired_x += abs(self.change)*jump_x
             
             self.rect.topleft = (desired_x, self.y)
             
@@ -116,9 +116,9 @@ class Enemy(Character):
             # Try vertical movement
             desired_y = self.y
             if self.y > player.y:
-                desired_y += -(abs(self.change))*jump_y # + r.choice([0, 0, 0, 0, 0, 0, 0, r.randint(-1,1)*.5, r.randint(-1,1)])
+                desired_y += -(abs(self.change))*jump_y
             else:
-                desired_y += abs(self.change)*jump_y # + r.choice([0, 0, 0, 0, 0, 0, 0, r.randint(-1,1)*.5, r.randint(-1,1)])
+                desired_y += abs(self.change)*jump_y
             
             self.rect.topleft = (self.x, desired_y) 
             
@@ -223,13 +223,13 @@ class Dragon(Enemy):
         self.img_path = 'resources/enemies/blue_dragon.png'
         super().__init__(x,y, change)
         self.img = pygame.transform.flip(self.img, True, False)
-        self.img = pygame.transform.scale(self.img, (122*1.5,128*1.5)) # start: 122,128
+        self.img = pygame.transform.scale(self.img, (122*1.5,128*1.5))
         self.x = 800
         self.hp = hp
         self.rect = self.img.get_rect(topleft=(self.x, self.y))
 
-        self.fire_ball = Bullet('resources/enemies/fire_ball.png', 316/4,103/4, chance=100) # crop: 316,103 | before:88,26
-        self.fire_cone = Melee('resources/enemies/fire_cone.png', 270,40, duration=3000, chance=300, telegraph_time=1200) # 1500 duration
+        self.fire_ball = Bullet('resources/enemies/fire_ball.png', 316/4,103/4, chance=100)
+        self.fire_cone = Melee('resources/enemies/fire_cone.png', 270,40, duration=3000, chance=300, telegraph_time=1200)
 
     def move(self, player, opppons):
         """ It randomly moves up and down while shooting fire balls and using the fire cone attack"""
