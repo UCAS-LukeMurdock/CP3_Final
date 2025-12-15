@@ -2,8 +2,9 @@
 import pygame
 from pygame import mixer
 
-# each of the rooms the knight plays in
+# Each of the rooms the knight plays in
 def play_room(game, player, room, next_btn, clock, start_time, time_txt):
+
     # the arrow to let the knight know to go to the next room(click button or walk to the right edge)
     go = pygame.transform.scale(pygame.image.load('resources/go.png'), (80,80))
     healed = False
@@ -101,12 +102,11 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
         player.move()
             
 
-            # Set Items
+        # Set Items
         for oppon in room.oppons:
             oppon.display(game)
 
         player.display(game)
-        player.heart_status(game)
 
         # sword collision: remove any opponents hit while sword active
         if player.sword_active == True:
@@ -117,11 +117,6 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
                         mixer.Sound('resources/sounds/explosion.wav').play()
                     except ValueError:
                         pass  # already removed
-            # if room.name == "Cave": 
-            #     if oppon.is_hit(player.sword_rect) and oppon.hp
-            #     if oppon.hp <= 0:
-            #         room.oppons.remove(oppon)
-            #         mixer.Sound('resources/sounds/explosion.wav').play()
 
         # if room cleared, wait for next button press to continue
         if not room.oppons:
@@ -129,7 +124,7 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
             if (room.name == "Jungle" or room.name == "Mountain") and healed == False:
                 if player.healing(game):
                     healed = True
-            if room.name == "Cave" or next_btn.draw(game, True) or player.x >= 900:
+            if room.name == "Cave" or next_btn.draw_and_click(game, True) or player.x >= 900:
                 next = True
         if next:
             break

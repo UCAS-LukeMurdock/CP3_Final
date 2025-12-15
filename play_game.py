@@ -11,6 +11,7 @@ from play_rooms import play_room
 from game_over import over
 from win_game import won
 
+# Sets up the game so that the user can play through all of the rooms.
 def play(game):
     
     # Set up the different rooms

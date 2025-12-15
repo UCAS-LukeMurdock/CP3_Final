@@ -5,6 +5,9 @@ from abc import ABC, abstractmethod
 
 
 class Character(ABC):
+    """The abstract class for the knight and enemies.
+    Sets up the character's location, image, and rect."""
+
     img_path = 'resources/default.png'
     def __init__(self, x,y):
         self.x = x
@@ -22,6 +25,9 @@ class Character(ABC):
 
 
 class Knight(Character):
+    """The class for the knight, which is what the player controls.
+    This class includes the mechanics for the knight's sword attack, health, and overall display."""
+
     def __init__(self, x,y):
         self.img_path = 'resources/player/knight.png'
         super().__init__(x,y)
@@ -65,47 +71,52 @@ class Knight(Character):
         self.rect.topleft = (self.x, self.y)
 
         # update sword timers/state each frame
-        self._update_sword_state()
+        self.update_sword()
 
-    def _update_sword_state(self):
+    def update_sword(self):
         now = pygame.time.get_ticks()
+        # Deactivates sword when it has reached its time duration and starts cooldown
         if self.sword_active and now - self.sword_start >= self.sword_duration:
-            # deactivate sword and start cooldown
             self.sword_active = False
             self.sword_cooldown_start = now
-        if not self.sword_ready and not self.sword_active and self.sword_cooldown_start:
+        
+        # If the sword is in cooldown then check to see if it is done with cooldown
+        if not self.sword_ready and not self.sword_active and self.sword_cooldown_start != 0:
             if now - self.sword_cooldown_start >= self.sword_cooldown:
                 self.sword_ready = True
                 self.sword_cooldown_start = 0
 
     def display(self, game):
+        """Displays the knight, their sword, and their heart"""
         # Check invincibility
         if self.invincible:
             now = pygame.time.get_ticks()
-            if now - self.invinc_start >= 2000: # if the player has been invincible for 2 secs 
+            if now - self.invinc_start >= 2000: # if the player has been invincible for 2 secs, then stop invincibility
                 self.invincible = False
             else:
+                # Display the knight brightly to show invincibility
                 bright_image = self.img.copy()
                 bright_image.fill((60, 60, 60), special_flags=pygame.BLEND_RGB_ADD)
                 game.screen.blit(bright_image, (self.x,self.y))
         else:
-            # draw player
+            # Display player regularly
             super().display(game)
 
+        # Display that the sword is ready
         if self.sword_ready == True:
-            # game.screen.blit(self.ready_img, (10,10))
             game.screen.blit(self.ready_img, (self.x + 65, self.y +75))
-            # game.screen.blit(self.sword_img, (self.x + 70, self.y + (self.img.get_height() // 2) - (self.sword_img.get_height() // 2)))
 
-        # draw sword when active (position it relative to player)
+        # Display sword when active (position is relative to player)
         if self.sword_active:
-            # example: position to the right and middle of the knight
             sword_x = self.x + 70
             sword_y = self.y + (self.img.get_height() // 2) - (self.sword_img.get_height() // 2)
             self.sword_rect.topleft = (sword_x, sword_y)
             game.screen.blit(self.sword_img, self.sword_rect)
+        
+        self.heart_status(game)
 
     def take_damage(self, amount = 1):
+        """Makes the knight lose health and start invincibility, when the knight is hit and not invincible."""
         if not self.invincible:
             self.hp -= amount
             if self.hp < 0:
@@ -116,6 +127,7 @@ class Knight(Character):
             self.invinc_start = pygame.time.get_ticks()
 
     def heart_status(self, game):
+        """Displays the status of the knights health"""
         file_path = 'resources/player/hearts/'
         if self.hp == 0:
             file_path += 'empty.png'
@@ -126,6 +138,7 @@ class Knight(Character):
         game.screen.blit(heart_img, (self.x +22,self.y +75))
 
     def attack(self):
+        """Starts sword attack"""
         if self.sword_ready and not self.sword_active:
             self.sword_active = True
             self.sword_start = pygame.time.get_ticks()
@@ -134,6 +147,7 @@ class Knight(Character):
             # position will be updated on next display call / frame
 
     def healing(self, game):
+        """Creates a heart that, when the knight touches, the knight is healed somewhat."""
         heart_item_img = pygame.image.load("resources/player/hearts/heart_up.png")
         heart_item_img = pygame.transform.scale(heart_item_img, (347/4,318/4)) # start: 347,318  prior: 90,90
         heart_rect = heart_item_img.get_rect(topleft=(455,255))

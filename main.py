@@ -6,6 +6,7 @@ from general_classes import WholeGame, Button, Text
 from play_game import play 
 
 
+# Main Menu Screen that explains the game, lets the user pick the difficulty, and see the best times.
 def main():
     pygame.init()
 
@@ -51,8 +52,8 @@ def main():
     need_help = True
     running = True
 
+    # User Interface
     while running:
-
         # Display Background
         game.mode = ''
         if not game.won_hard:
@@ -88,17 +89,17 @@ def main():
                     game.mode = 'hard'
 
         # Display Buttons
-        if quit_button.draw(game):
+        if quit_button.draw_and_click(game):
             running = False
         pygame.draw.circle(game.screen, (100, 0, 0), (800,400), 45)
         game.screen.blit(quit_img, (768,368))
 
-        if help_button.draw(game):
+        if help_button.draw_and_click(game):
             need_help = not need_help
         if need_help:
             help_text.display(game, True)
         
-        if slide_button.draw(game):
+        if slide_button.draw_and_click(game):
             game.slide = not game.slide
         if game.slide == False:
             pygame.draw.circle(game.screen, (255, 0, 0), (325,400), 40)
@@ -106,14 +107,14 @@ def main():
             pygame.draw.circle(game.screen, (0, 255, 0), (325,400), 40)
         
         
-        if easy_button.draw(game, True):
+        if easy_button.draw_and_click(game, True):
             game.mode = 'easy'
-        elif normal_button.draw(game, True):
+        elif normal_button.draw_and_click(game, True):
             game.mode = 'normal'
-        elif hard_button.draw(game, True):
+        elif hard_button.draw_and_click(game, True):
             game.mode = 'hard'
         
-        # Play game
+        # Start game
         if game.mode != '':
             if play(game):
                 if game.mode == 'hard':
