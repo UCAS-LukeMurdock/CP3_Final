@@ -32,7 +32,7 @@ def won(game, next_btn, time_txt):
                 elif event.key == pygame.K_RETURN:
                     end = True
 
-        if next_btn.draw(game, True):
+        if next_btn.draw_and_click(game, True):
             end = True
         if end:
             #the sounds for coins when you win easy, normal, and hard leading up to win the "treasure"

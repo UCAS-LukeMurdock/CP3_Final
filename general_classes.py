@@ -4,6 +4,7 @@ from pygame import mixer
 
 
 class WholeGame:
+    """The class that contains the general information, like the difficulty, for the game."""
     def __init__(self, screen, mode, slide, won_hard):
         self.screen = screen
         self.mode = mode
@@ -24,6 +25,7 @@ class WholeGame:
 
 
 class Room:
+    """Contains the information for a room"""
     def __init__(self, back_img, name):
         self.name = name
         self.background = pygame.transform.scale(pygame.image.load(back_img), (1000,600))
@@ -35,6 +37,7 @@ class Room:
 
 
 class Text:
+    """Sets up text and allows it to be displayed"""
     def __init__(self, style='freesansbold.ttf', size=60, txt='text', color=(250,250,250), coord=(0,0), underline=False):
         self.style = style
         self.size = size
@@ -63,6 +66,7 @@ class Text:
 
 
 class Button:
+    """Sets up a button, displays it, and allows it to be clicked"""
     def __init__(self, x, y, img, scale=1):
         # Load and scale the image
         self.img = pygame.image.load(img).convert_alpha()
@@ -74,12 +78,13 @@ class Button:
         self.rect = self.img.get_rect(topleft=(x, y))
         self.clicked = False
 
-    def draw(self, game, is_rect = False):
+    def draw_and_click(self, game, is_rect = False):
         """Draws the button. Adds a radial white glow on hover. Returns True if clicked."""
         action = False
         pos = pygame.mouse.get_pos()
 
         if self.rect.collidepoint(pos):
+            # Hover Enhancements
             if is_rect:
                 # Creates a white rectangle around the button
                 glow_surface = pygame.Surface((self.rect.width + 12, self.rect.height + 12), pygame.SRCALPHA)
@@ -95,7 +100,6 @@ class Button:
 
                 # Position the glow behind the button
                 game.screen.blit(glow_surface, (self.rect.x - 1, self.rect.y - 1))
-
             game.screen.blit(self.img, self.rect)
 
             # Check for click
