@@ -54,29 +54,29 @@ def play_room(game, player, room, next_btn, clock, start_time, time_txt):
             elif (keys[pygame.K_UP] or keys[pygame.K_w]) and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
                 player.y_change = 0
             elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and (keys[pygame.K_UP] or keys[pygame.K_w]):
-                player.x_change = -3
-                player.y_change = -3
+                player.x_change = -5
+                player.y_change = -5
             elif (keys[pygame.K_LEFT] or keys[pygame.K_a]) and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-                player.x_change = -3
-                player.y_change = 3
+                player.x_change = -5
+                player.y_change = 5
             elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (keys[pygame.K_UP] or keys[pygame.K_w]):
-                player.x_change = 3
-                player.y_change = -3
+                player.x_change = 5
+                player.y_change = -5
             elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-                player.x_change = 3
-                player.y_change = 3
+                player.x_change = 5
+                player.y_change = 5
             
             elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                player.x_change = -3
+                player.x_change = -5
                 player.y_change = 0
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                player.x_change = 3
+                player.x_change = 5
                 player.y_change = 0
             elif keys[pygame.K_UP] or keys[pygame.K_w]:
-                player.y_change = -3
+                player.y_change = -5
                 player.x_change = 0
             elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
-                player.y_change = 3
+                player.y_change = 5
                 player.x_change = 0
 
         #The code for normal mode moving up, down, side to side
